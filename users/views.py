@@ -3,8 +3,12 @@ from django.contrib.auth import login, authenticate
 from .forms import CustomerSignupForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
-
+from django.contrib.auth.decorators import login_required
 # Create your views here.
+
+def home(request):
+    return render(request, 'users/home.html')
+
 def signup_view(request):
     if request.method == 'POST':
         form = CustomerSignupForm(request.POST)
@@ -44,6 +48,5 @@ def login_view(request):
         
     return render(request, 'users/login.html', {'form': form})
 
-def home_view(request):
-    return render(request, 'users/home.html')
+
 
