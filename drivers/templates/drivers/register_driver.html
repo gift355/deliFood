@@ -1,0 +1,126 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
+    <style>
+        :root {
+            --primary: #49005c;
+            --primary-container: #631f75;
+            --on-primary: #ffffff;
+            --background: #ffffff;
+            --on-surface-variant: #4e434f;
+            --font-headline: 'Manrope', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --input-border: #e0e0e0;
+        }
+
+        body {
+            background-color: var(--background);
+            font-family: var(--font-body);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+        }
+
+        .signup-container { width: 100%; max-width: 480px; padding: 1rem; }
+        
+        .logo-section { text-align: center; margin-bottom: 1.2rem; }
+        .logo-img { height: 110px; width: auto; margin-bottom: 0.2rem; }
+        
+        .headline {
+            font-family: var(--font-headline);
+            font-weight: 800;
+            color: var(--primary);
+            font-size: 1.4rem;
+            letter-spacing: -0.5px;
+            margin-top: 0.2rem;
+        }
+
+        .signup-card {
+            background-color: #ffffff;
+            border-radius: 1.25rem;
+            padding: 1.8rem 2.2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+            border: 1px solid #f3f3f3;
+        }
+
+        .form-label { 
+            font-size: 0.75rem; 
+            font-weight: 600; 
+            color: var(--on-surface-variant); 
+            margin-bottom: 0.2rem; 
+            display: block; 
+        }
+
+        .form-control, .form-select {
+            background-color: #ffffff !important; 
+            border: 1px solid var(--input-border) !important;
+            border-radius: 0.6rem !important;
+            padding: 0.55rem 0.9rem !important;
+            font-size: 0.85rem;
+        }
+
+        /* Match the purple button from your signup */
+        .btn-driver {
+            background: linear-gradient(to right, var(--primary), var(--primary-container));
+            color: white; 
+            border: none; 
+            border-radius: 50px;
+            padding: 0.8rem 1rem;
+            width: 100%; 
+            font-weight: 700; 
+            font-family: var(--font-headline);
+            font-size: 0.95rem;
+            margin-top: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(73, 0, 92, 0.12);
+        }
+
+        .btn-driver:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+    </style>
+</head>
+<body>
+
+<main class="signup-container">
+    <div class="logo-section">
+        <img src="/static/images/delidriver.png" class="logo-img" alt="Delidiver Logo">
+        <h1 class="headline">Driver Registration</h1>
+        <p style="font-size: 0.8rem; color: #666;">Enter your vehicle details to join the fleet.</p>
+    </div>
+
+    <div class="signup-card">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            {% for field in form %}
+                <div class="mb-3">
+                    <label class="form-label">{{ field.label }}</label>
+                    {{ field }}
+                </div>
+            {% endfor %}
+
+            <button class="btn-driver" type="submit">Complete Registration</button>
+        </form>
+
+        <div style="text-align: center; margin-top: 1.2rem; font-size: 0.85rem;">
+            <a href="{% url 'home' %}" style="color: var(--primary); text-decoration: none; font-weight: 700;">← Back to Home</a>
+        </div>
+    </div>
+</main>
+
+<script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>
