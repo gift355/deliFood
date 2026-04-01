@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-content">
+
+        <div class="hero-box">
+            <img src="{% static 'images/backGburger.png' %}" alt="Food">
+        </div>
+
+        <h1>Fresh, Delicious Meals Delivered to You</h1>
+
+        <p>
+            At DeliFood, we bring you high-quality meals prepared with care and
+            delivered with speed and reliability.
+        </p>
+
+        <button class="btn">Order Now</button>
+
+    </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about">
+
+    <div class="about-content">
+        <div class="animate-left">
+            <img src="{% static 'images/aboutBg.jpeg' %}" alt="Food">
+        </div>
+        <div class=" animate-top about-text">
+            <h2>About DeliFood</h2>
+        <p>
+            DeliFood is committed to delivering fresh, high-quality meals sourced from trusted local kitchens. We
+            combine culinary excellence with reliable delivery systems to ensure that every order meets the highest
+            standards of taste, hygiene, and consistency. Our focus is on providing a seamless and dependable food
+            experience that caters to the needs of modern, fast-paced lifestyles.
+<br><br>
+            We strive to make quality food accessible, convenient, and enjoyable for everyone. By leveraging efficient
+            technology and strong partnerships with local vendors, DeliFood ensures prompt service and exceptional
+            customer satisfaction. Our goal is to continuously improve the way people experience food delivery while
+            maintaining a strong commitment to quality and community.
+        </p>
+        </div>
+    </div>
+</section>
+
+<!-- SERVICES -->
+<section class="services">
+    <h2>What We Offer</h2>
+
+    <div class="service-grid animate-right">
+
+        <div class="service">
+            <h3>Fast Delivery</h3>
+            <p>Reliable delivery that gets your meals to you while still fresh and hot.</p>
+        </div>
+
+        <div class="service">
+            <h3>Quality Meals</h3>
+            <p>Carefully prepared dishes using fresh ingredients and trusted recipes.</p>
+        </div>
+
+        <div class="service">
+            <h3>Wide Variety</h3>
+            <p>A diverse menu offering meals for every taste and preference.</p>
+        </div>
+
+    </div>
+</section>
+
+<!-- MENU -->
+<section class="menu" id="menu">
+    <h2>Popular Dishes</h2>
+
+    <div class="menu-items animate-left">
+
+        <div class="menu-item">
+            <img src="{% static 'images/grilled.jpg' %}" class="default-img">
+            <img src="{% static 'images/grilled2.jpg' %}" class="hover-img">
+            <h4>Grilled Chicken</h4>
+        </div>
+
+        <div class="menu-item">
+            <img src="{% static 'images/beefburger.jpg' %}" class="default-img">
+            <img src="{% static 'images/beefburger2.jpg' %}" class="hover-img">
+            <h4>Beef Burger</h4>
+        </div>
+
+        <div class="menu-item">
+            <img src="{% static 'images/pasta.jpg' %}" class="default-img">
+            <img src="{% static 'images/pasta2.jpg' %}" class="hover-img">
+            <h4>Pasta Delight</h4>
+        </div>
+
+        <div class="menu-item">
+            <img src="{% static 'images/jollof.jpg' %}" class="default-img">
+            <img src="{% static 'images/friedrice2.jpg' %}" class="hover-img">
+            <h4>Try Others!</h4>
+        </div>
+
+    </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+    <h2>Customer Experience</h2>
+
+    <div class="testimonial">
+        <p>"The meals are always fresh and tasty. DeliFood never disappoints!"</p>
+        <strong>- Customer</strong>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+    <h2>Ready to Enjoy Great Food?</h2>
+    <button class="btn">Place an Order Here</button>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <div class="footer-container">
+
+        <div class="footer-section">
+            <h3>DeliFood</h3>
+            <p>
+                DeliFood brings you fresh, high-quality meals delivered straight to your door.
+                Enjoy a seamless food experience with speed, taste, and reliability.
+            </p>
+        </div>
+
+        <div class="footer-section">
+            <h3>Links</h3>
+            <a href="#">Home</a>
+            <a href="#">About</a>
+            <a href="#menu">Menu</a>
+            <a href="#">Contact</a>
+        </div>
+
+        <div class="footer-section">
+            <h3>Contact</h3>
+            <p><i class="fas fa-home me-2"></i> Lagos, Nigeria</p>
+            <p><i class="fas fa-envelope me-2"></i> support@delifood.com</p>
+            <p><i class="fas fa-phone me-2"></i> +234 800 000 0000</p>
+        </div>
+
+        <div class="socials">
+            <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+            <a href="#"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#"><i class="fa-brands fa-facebook"></i></a>
+            <a href="#"><i class="fa-brands fa-tiktok"></i></a>
+        </div>
+
+    </div>
+
+    <div class="footer-bottom">
+        <p>&copy; 2026 DeliFood. All rights reserved.</p>
+    </div>
+</footer>
+
+<!-- JAVASCRIPT (SCROLL ANIMATIONS) -->
+<script>
+    function isInViewport(element) {
+        const rect = element.getBoundingClientRect();
+        return rect.top <= window.innerHeight - 100;
+    }
+
+    function scrollAnimations() {
+        document.querySelectorAll('.animate-top, .animate-right, .animate-left')
+            .forEach(el => {
+                if (isInViewport(el)) {
+                    el.classList.add('in-view');
+                }
+            });
+    }
+
+    window.addEventListener('scroll', scrollAnimations);
+    window.addEventListener('load', scrollAnimations);
+</script>
+
+{% endblock %}
