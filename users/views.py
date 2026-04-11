@@ -6,8 +6,8 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 # Create your views here.
 
-def home_view(request):
-    return render(request, 'users/home.html')
+def landing_view(request):
+    return render(request, 'users/landing.html')
 
 def signup_view(request):
     if request.method == 'POST':
