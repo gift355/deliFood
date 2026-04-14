@@ -48,5 +48,8 @@ def login_view(request):
         
     return render(request, 'users/login.html', {'form': form})
 
+def home_view(request):
+    return render(request, 'users/home.html')
+
 
 

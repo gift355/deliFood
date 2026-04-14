@@ -1,0 +1,197 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>DeliFood | Fresh Meals Delivered</title>
+    
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
+    <style>
+        :root {
+            --primary: #49005c;
+            --primary-container: #631f75;
+            --background: #ffffff;
+            --font-headline: 'Manrope', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            font-family: var(--font-body);
+            margin: 0;
+        }
+
+        /* Modern Navbar */
+        .navbar {
+            padding: 1rem 5%;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo-img { height: 45px; width: auto; }
+
+        /* Hero Section with Food Focus */
+        .hero {
+            padding: 4rem 5%;
+            background: linear-gradient(135deg, #fdf8ff 0%, #ffffff 100%);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 70vh;
+        }
+
+        .hero-text { max-width: 550px; }
+
+        .headline {
+            font-family: var(--font-headline);
+            font-weight: 800;
+            font-size: 3.5rem;
+            color: var(--primary);
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Search Bar styling */
+        .search-container {
+            background: white;
+            padding: 8px;
+            border-radius: 50px;
+            box-shadow: 0 10px 30px rgba(73, 0, 92, 0.1);
+            display: flex;
+            align-items: center;
+            margin-top: 2rem;
+            border: 1px solid #eee;
+        }
+
+        .search-input {
+            border: none;
+            flex: 1;
+            padding: 10px 20px;
+            outline: none;
+            font-size: 1rem;
+        }
+
+        .btn-search {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 700;
+            transition: 0.3s;
+        }
+
+        .btn-search:hover { filter: brightness(1.2); }
+
+        /* Categories Section */
+        .category-card {
+            border: none;
+            border-radius: 20px;
+            transition: 0.3s;
+            cursor: pointer;
+            text-align: center;
+            padding: 1.5rem;
+            background: #fcfaff;
+        }
+
+        .category-card:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-5px);
+        }
+
+        .category-card i { font-size: 2.5rem; margin-bottom: 10px; display: block; }
+
+        .hero-image img {
+            width: 100%;
+            max-width: 500px;
+            border-radius: 30px;
+            box-shadow: 20px 20px 60px rgba(0,0,0,0.1);
+        }
+
+        @media (max-width: 991px) {
+            .hero { flex-direction: column; text-align: center; padding-top: 2rem; }
+            .headline { font-size: 2.5rem; }
+            .hero-image { margin-top: 3rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar d-flex justify-content-between">
+        <img src="{% static 'images/delifood.png' %}" class="logo-img" alt="DeliFood Logo">
+        
+        <div class="d-flex align-items-center gap-4">
+            <a href="{% url 'driver_dashboard' %}" class="text-decoration-none text-dark fw-bold small">Driver Portal</a>
+            <div class="dropdown">
+                <button class="btn btn-light rounded-pill dropdown-toggle fw-bold px-3" type="button" data-bs-toggle="dropdown">
+                    <span class="material-symbols-outlined align-middle" style="font-size: 20px;">account_circle</span>
+                    {{ user.username|default:"Account" }}
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end border-0 shadow-sm mt-2">
+                    <li><a class="dropdown-item" href="#">Orders</a></li>
+                    <li><a class="dropdown-item" href="#">Settings</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item text-danger" href="{% url 'logout' %}">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-text">
+            <h1 class="headline">Premium Meals, <br>Delivered Daily.</h1>
+            <p class="sub-text text-muted fs-5">Experience the finest cuisine from the best restaurants in town, delivered right to your doorstep.</p>
+            
+            <div class="search-container">
+                <span class="material-symbols-outlined ms-3 text-muted">location_on</span>
+                <input type="text" class="search-input" placeholder="Enter your delivery address...">
+                <button class="btn-search">Find Food</button>
+            </div>
+        </div>
+
+        <div class="hero-image">
+            <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=1000" alt="Delicious Food">
+        </div>
+    </section>
+
+    <section class="container py-5">
+        <h4 class="fw-bold mb-4" style="font-family: var(--font-headline);">Popular Categories</h4>
+        <div class="row g-4">
+            <div class="col-6 col-md-3">
+                <div class="category-card">
+                    <span class="material-symbols-outlined" style="font-size: 40px;">lunch_dining</span>
+                    <p class="mb-0 fw-bold">Burgers</p>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="category-card">
+                    <span class="material-symbols-outlined" style="font-size: 40px;">local_pizza</span>
+                    <p class="mb-0 fw-bold">Pizza</p>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="category-card">
+                    <span class="material-symbols-outlined" style="font-size: 40px;">icecream</span>
+                    <p class="mb-0 fw-bold">Desserts</p>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="category-card">
+                    <span class="material-symbols-outlined" style="font-size: 40px;">local_drink</span>
+                    <p class="mb-0 fw-bold">Drinks</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

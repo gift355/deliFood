@@ -1,6 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .forms import DriverProfileForm
+from .models import DriverProfile
 
 # Create your views here.
 @login_required
@@ -20,9 +21,7 @@ def register_driver(request):
     return render(request, 'drivers/register_driver.html', {'form': form})
 
 
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from .models import DriverProfile
+
 
 @login_required
 def driver_dashboard(request):
@@ -33,7 +32,10 @@ def driver_dashboard(request):
     # 2. Context dictionary to send data to the HTML
     context = {
         'driver': driver,
-        'earnings': driver.total_earnings,
+        'driver_balance': driver.total_earnings,
+        'total_deliveries': 0,
+        'rating': 5.0,
+        'available_orders': [],
         'status': "Online" if driver.is_online else "Offline",
         # 'active_orders': Order.objects.filter(driver=driver, status='active') # For later!
     }
