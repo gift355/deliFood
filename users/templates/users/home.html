@@ -35,7 +35,7 @@
             z-index: 1000;
         }
 
-        .logo-img { height: 45px; width: auto; }
+        .logo-img { height: 65px; width: auto; }
 
         /* Hero Section with Food Focus */
         .hero {
@@ -109,11 +109,37 @@
 
         .category-card i { font-size: 2.5rem; margin-bottom: 10px; display: block; }
 
-        .hero-image img {
+        .hero-image-slider {
             width: 100%;
-            max-width: 500px;
-            border-radius: 30px;
-            box-shadow: 20px 20px 60px rgba(0,0,0,0.1);
+            max-width: 420px;
+            position: relative;
+            margin-right: 5%;
+        }
+        .carousel-item img {
+            width: 100%;
+            height:350px;
+            object-fit: contain;
+            animation: float 6s ease-in-out infinite
+        }
+
+        @keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+    100% { transform: translateY(0px); }
+}
+       .carousel-fade .carousel-item {
+    transition-duration: 1s;
+}
+
+        /* Logout button reset to look like a menu link */
+        .logout-btn {
+            background: none;
+            border: none;
+            width: 100%;
+            text-align: left;
+            padding: 0;
+            margin: 0;
+            display: block;
         }
 
         @media (max-width: 991px) {
@@ -129,7 +155,7 @@
         <img src="{% static 'images/delifood.png' %}" class="logo-img" alt="DeliFood Logo">
         
         <div class="d-flex align-items-center gap-4">
-            <a href="{% url 'driver_dashboard' %}" class="text-decoration-none text-dark fw-bold small">Driver Portal</a>
+            <a href="{% url 'register_driver' %}" class="text-decoration-none text-dark fw-bold small">Driver Portal</a>
             <div class="dropdown">
                 <button class="btn btn-light rounded-pill dropdown-toggle fw-bold px-3" type="button" data-bs-toggle="dropdown">
                     <span class="material-symbols-outlined align-middle" style="font-size: 20px;">account_circle</span>
@@ -139,7 +165,12 @@
                     <li><a class="dropdown-item" href="#">Orders</a></li>
                     <li><a class="dropdown-item" href="#">Settings</a></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item text-danger" href="{% url 'logout' %}">Logout</a></li>
+                    <li>
+                        <form action="{% url 'logout' %}" method="post" class="dropdown-item m-0">
+                            {% csrf_token %}
+                            <button type="submit" class="logout-btn text-danger">Logout</button>
+                        </form>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -157,8 +188,20 @@
             </div>
         </div>
 
-        <div class="hero-image">
-            <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=1000" alt="Delicious Food">
+        <div class="hero-image-slider">
+           <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    <div class="carousel-item active" data-bs-interval="3000">
+                        <img src="{% static 'images/boy.png' %}" alt="Delicious Meal 1">
+                    </div>
+                    <div class="carousel-item" data-bs-interval="3000">
+                        <img src="{% static 'images/girl.png' %}" alt="Delicious Meal 2">
+                    </div>
+                    <div class="carousel-item" data-bs-interval="3000">
+                        <img src="{% static 'images/food1.png' %}" alt="Delicious Meal 3">
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
