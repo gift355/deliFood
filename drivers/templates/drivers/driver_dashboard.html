@@ -20,6 +20,7 @@
             --on-surface-variant: #4e434f;
             --font-headline: 'Manrope', sans-serif;
             --font-body: 'Inter', sans-serif;
+            --sidebar-width: 280px;
         }
 
         body {
@@ -27,21 +28,34 @@
             font-family: var(--font-body);
             margin: 0;
             color: var(--on-surface);
+            overflow-x: hidden;
         }
 
-        .dashboard-wrapper { display: flex; min-height: 100vh; }
+        .dashboard-wrapper { 
+            display: flex; 
+            min-height: 100vh; 
+            transition: all 0.3s ease;
+        }
 
-        /* Sidebar */
+        /* Sidebar Modern Styles */
         .sidebar {
-            width: 280px;
+            width: var(--sidebar-width);
             background: white;
             border-right: 1px solid #f0f0f0;
             padding: 2rem 1.5rem;
             display: flex;
             flex-direction: column;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            flex-shrink: 0;
         }
 
-        .logo-img { height: 60px; width: auto; margin-bottom: 2.5rem; }
+        /* Sidebar Collapsed State */
+        .sidebar.collapsed {
+            margin-left: calc(var(--sidebar-width) * -1);
+        }
+
+        .logo-img { height: 55px; width: auto; max-width: 100%; object-fit: contain; margin-bottom: 2.5rem; display: block;}
 
         .nav-link-custom {
             display: flex;
@@ -54,6 +68,7 @@
             border-radius: 12px;
             transition: all 0.2s ease;
             margin-bottom: 0.5rem;
+            white-space: nowrap;
         }
 
         .nav-link-custom.active {
@@ -67,7 +82,25 @@
         }
 
         /* Main Content */
-        .main-content { flex: 1; padding: 2.5rem; }
+        .main-content { 
+            flex: 1; 
+            padding: 2.5rem; 
+            min-width: 0;
+            transition: all 0.3s ease;
+        }
+
+        /* Toggle Button */
+        .menu-toggle {
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            padding: 0;
+            margin-right: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
         .stat-card {
             background: white;
@@ -142,14 +175,23 @@
         }
 
         @media (max-width: 768px) {
-            .sidebar { display: none; }
+            .sidebar { 
+                position: fixed;
+                height: 100vh;
+                left: 0;
+                top: 0;
+                z-index: 1000;
+            }
+            .sidebar.collapsed {
+                margin-left: calc(var(--sidebar-width) * -1);
+            }
         }
     </style>
 </head>
 <body>
 
 <div class="dashboard-wrapper">
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
         <img src="{% static 'images/delifood.png' %}" class="logo-img" alt="DeliFood">
         
         <nav>
@@ -168,6 +210,10 @@
         </nav>
 
         <div class="mt-auto">
+            <a href="{% url 'home' %}" class="nav-link-custom">
+                <span class="material-symbols-outlined">home</span> Back to Home
+            </a>
+            
             <a href="{% url 'logout' %}" class="nav-link-custom text-danger">
                 <span class="material-symbols-outlined">logout</span> Logout
             </a>
@@ -176,9 +222,14 @@
 
     <main class="main-content">
         <header class="mb-5 d-flex justify-content-between align-items-center">
-            <div>
-                <h1 style="font-family: var(--font-headline); font-weight: 800; font-size: 1.8rem;">Driver Dashboard</h1>
-                <p class="text-muted small">Real-time delivery management hub.</p>
+            <div class="d-flex align-items-center">
+                <button class="menu-toggle" id="toggleBtn">
+                    <span class="material-symbols-outlined" style="font-size: 32px;">menu</span>
+                </button>
+                <div>
+                    <h1 style="font-family: var(--font-headline); font-weight: 800; font-size: 1.8rem; margin-bottom: 0;">Driver Dashboard</h1>
+                    <p class="text-muted small mb-0">Real-time delivery management hub.</p>
+                </div>
             </div>
             
             <div class="d-flex align-items-center gap-3">
@@ -186,7 +237,7 @@
                     <p class="mb-0 fw-bold" style="font-size: 0.9rem;">
                         {{ user.first_name }} {{ user.last_name|default:"" }}
                     </p>
-                    <p class="mb-0 text-success small fw-bold>{% if status == 'Online' %}text-success{% else %}text-danger{% endif %}">
+                    <p class="mb-0 text-success small fw-bold">
                         {{ status }}
                     </p>
                 </div>
@@ -256,6 +307,15 @@
         </div>
     </main>
 </div>
+
+<script>
+    const toggleBtn = document.getElementById('toggleBtn');
+    const sidebar = document.getElementById('sidebar');
+
+    toggleBtn.addEventListener('click', () => {
+        sidebar.classList.toggle('collapsed');
+    });
+</script>
 
 <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
 </body>

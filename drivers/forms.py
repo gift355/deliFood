@@ -14,10 +14,12 @@ class DriverProfileForm(forms.ModelForm): # Fixed: Removed the underscore
         
         widgets = {
             'vehicle_type': forms.Select(attrs={
-                'class': 'form-select p-3 shadow-sm border-0'
+                'class': 'form-select p-3 shadow-sm border-0 rounded pill',
+                'style': 'background-color: #fdf8ff;'
             }),
             'license_plate': forms.TextInput(attrs={
-                'class': 'form-control p-3 shadow-sm border-0', 
-                'placeholder': 'e.g. ABC-123-XY'
+                'class': 'form-control p-3 shadow-sm border-0 rounded-pill', 
+                'placeholder': 'e.g. ABC-123-XY',
+                'style': 'background-color: #fdf8ff;'
             }),
         }
