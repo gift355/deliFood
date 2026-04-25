@@ -1,7 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+from datetime import timedelta
+from django.db.models import Sum
 from .forms import DriverProfileForm
-from .models import DriverProfile
+from .models import DriverProfile, Transaction
+
 
 # Create your views here.
 @login_required
@@ -54,3 +58,22 @@ def driver_dashboard(request):
     }
     
     return render(request, 'drivers/driver_dashboard.html', context)
+
+def driver_earnings(request):
+    # Try to get the profile, or set it to None
+    driver = getattr(request.user, 'driverprofile', None)
+
+    if not driver:
+        # If they aren't a driver, send them away or show an error
+        return redirect('home')
+    transactions = Transaction.objects.filter(driver=request.user.driverprofile).order_by('timestamp')
+    last_seven_days = timezone.now() - timedelta(days=7)
+    weekly_data = transactions.filter(timestamp__gte=last_seven_days).aggregate(Sum('amount'))
+    weekly_total = weekly_data['amount__sum'] or 0
+    context = {
+        'transactions': transactions,
+        'weekly_total': weekly_total,
+        'wallet_balance': driver.total_earnings
+    }
+
+    return render(request, 'drivers/driver_earnings.html', context)

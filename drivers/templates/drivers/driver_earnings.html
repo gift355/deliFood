@@ -1,0 +1,120 @@
+{% extends 'drivers/base_driver.html' %}
+{% load static %}
+
+{% block title %}DeliFood | My Earnings{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Sleek Wallet Card */
+    .earnings-card {
+        background: linear-gradient(135deg, var(--primary), #7a1b8f);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 1.25rem;
+        box-shadow: 0 10px 25px rgba(73, 0, 92, 0.12);
+        transition: transform 0.2s ease;
+    }
+    .earnings-card:hover { transform: translateY(-3px); }
+
+    /* Transaction Table Styling */
+    .history-card {
+        background: white;
+        border-radius: 1.25rem;
+        border: 1px solid #f0f0f0;
+        overflow: hidden;
+        margin-top: 2rem;
+    }
+
+    .type-badge {
+        padding: 5px 12px;
+        border-radius: 50px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .bg-delivery { background: #e8f5e9; color: #2e7d32; }
+    .bg-withdrawal { background: #ffebee; color: #c62828; }
+
+    .amount-plus { color: #2e7d32; font-weight: 700; }
+    .amount-minus { color: #c62828; font-weight: 700; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <div class="mb-4">
+        <h1 style="font-family:'Manrope'; font-weight:800; font-size:1.8rem; margin:0;">Financial Overview</h1>
+        <p class="text-muted">Track your payouts and delivery income.</p>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-sm-6 col-lg-4">
+            <div class="earnings-card">
+                <div class="d-flex align-items-center gap-2 mb-2" style="opacity: 0.8;">
+                    <span class="material-symbols-outlined" style="font-size: 1.2rem;">payments</span>
+                    <p class="small fw-bold mb-0">Available Balance</p>
+                </div>
+                <h2 class="fw-800 mb-0" style="font-size: 2rem;">₦{{ wallet_balance|default:"0.00" }}</h2>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm" style="border-radius: 1.25rem; padding: 1.5rem; border: 1px solid #f0f0f0 !important;">
+                <div class="d-flex align-items-center gap-2 mb-2 text-muted">
+                    <span class="material-symbols-outlined" style="font-size: 1.2rem;">event_repeat</span>
+                    <p class="small fw-bold mb-0">Last 7 Days</p>
+                </div>
+                <h2 style="color: var(--primary); font-weight: 800; margin-bottom: 0; font-size: 2rem;">₦{{ weekly_total|default:"0.00" }}</h2>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 d-none d-lg-block"></div>
+    </div>
+
+    <div class="history-card shadow-sm">
+        <div class="p-4 border-bottom bg-white">
+            <h5 class="mb-0 fw-bold">Recent Transactions</h5>
+        </div>
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
+                <thead class="bg-light">
+                    <tr class="text-muted small">
+                        <th class="ps-4 py-3">TRANSACTION DETAILS</th>
+                        <th>TYPE</th>
+                        <th>DATE</th>
+                        <th class="text-end pe-4">AMOUNT</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for t in transactions %}
+                    <tr>
+                        <td class="ps-4">
+                            <div class="fw-bold text-dark">{{ t.description }}</div>
+                        </td>
+                        <td>
+                            <span class="type-badge bg-{{ t.transaction_type }}">
+                                {{ t.get_transaction_type_display }}
+                            </span>
+                        </td>
+                        <td class="text-muted small">{{ t.timestamp|date:"d M, Y" }}</td>
+                        <td class="text-end pe-4">
+                            <span class="{% if t.transaction_type == 'withdrawal' %}amount-minus{% else %}amount-plus{% endif %}">
+                                {% if t.transaction_type == 'withdrawal' %}-{% else %}+{% endif %}₦{{ t.amount }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center py-5">
+                            <span class="material-symbols-outlined text-muted" style="font-size: 48px; opacity: 0.2;">receipt_long</span>
+                            <p class="text-muted mt-2">No transaction history found.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

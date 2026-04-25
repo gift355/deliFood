@@ -1,0 +1,145 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>{% block title %}DeliFood Driver{% endblock %}</title>
+    
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
+    <style>
+        :root {
+            --primary: #49005c;
+            --background: #fcfaff; 
+            --sidebar-width: 280px;
+            --sidebar-collapsed-width: 85px;
+        }
+
+        body { background-color: var(--background); font-family: 'Inter', sans-serif; margin: 0; overflow-x: hidden; }
+
+        /* Sidebar Wrapper */
+        .dashboard-wrapper { display: flex; min-height: 100vh; }
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background: white;
+            border-right: 1px solid #f0f0f0;
+            padding: 2rem 1.2rem;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: sticky;
+            top: 0;
+            height: 100vh;
+        }
+
+        /* The "Sleek Collapse" Logic */
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed-width);
+            padding: 2rem 0.8rem;
+        }
+
+        .sidebar.collapsed .nav-text, 
+        .sidebar.collapsed .sidebar-logo-full {
+            display: none;
+        }
+
+        .sidebar.collapsed .nav-link-custom {
+            justify-content: center;
+            padding: 0.8rem;
+        }
+
+        /* Navigation Links */
+        .nav-link-custom {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.8rem 1.2rem;
+            color: #4e434f;
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 12px;
+            margin-bottom: 0.5rem;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+
+        .nav-link-custom .material-symbols-outlined { font-size: 24px; }
+        .nav-link-custom.active { background-color: #f4e8f7; color: var(--primary); }
+        .nav-link-custom:hover:not(.active) { background-color: #fcfaff; color: var(--primary); }
+
+        /* Main Content Area */
+        .main-content { flex: 1; padding: 2.5rem; min-width: 0; transition: 0.3s; }
+
+        .logo-container { height: 50px; margin-bottom: 2.5rem; display: flex; align-items: center; overflow: hidden; }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<div class="dashboard-wrapper">
+    <aside class="sidebar" id="sidebar">
+        <div class="logo-container">
+            <img src="{% static 'images/delifood.png' %}" class="sidebar-logo-full" style="width: 100px; height: auto;" alt="DeliFood">
+        </div>
+
+        <nav>
+            <a href="{% url 'driver_dashboard' %}" class="nav-link-custom {% if request.resolver_match.url_name == 'driver_dashboard' %}active{% endif %}">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span class="nav-text">Dashboard</span>
+            </a>
+            
+            <a href="{% url 'driver_earnings' %}" class="nav-link-custom {% if request.resolver_match.url_name == 'driver_earnings' %}active{% endif %}">
+                <span class="material-symbols-outlined">payments</span>
+                <span class="nav-text">Earnings</span>
+            </a>
+
+            <a href="#" class="nav-link-custom">
+                <span class="material-symbols-outlined">directions_car</span>
+                <span class="nav-text">Deliveries</span>
+            </a>
+        </nav>
+
+        <div class="mt-auto">
+            <a href="{% url 'home' %}" class="nav-link-custom">
+                <span class="material-symbols-outlined">home</span>
+                <span class="nav-text">Back to Home</span>
+            </a>
+            <a href="{% url 'logout' %}" class="nav-link-custom text-danger">
+                <span class="material-symbols-outlined">logout</span>
+                <span class="nav-text">Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="mb-4">
+            <button class="btn p-0" id="toggleBtn">
+                <span class="material-symbols-outlined" style="font-size:32px; color:var(--primary)">menu</span>
+            </button>
+        </header>
+        
+        {% block content %}
+        {% endblock %}
+    </main>
+</div>
+
+<script>
+    const toggleBtn = document.getElementById('toggleBtn');
+    const sidebar = document.getElementById('sidebar');
+
+    // Check local storage so the sidebar stays collapsed if the user refreshed
+    if (localStorage.getItem('sidebar-collapsed') === 'true') {
+        sidebar.classList.add('collapsed');
+    }
+
+    toggleBtn.addEventListener('click', () => {
+        sidebar.classList.toggle('collapsed');
+        localStorage.setItem('sidebar-collapsed', sidebar.classList.contains('collapsed'));
+    });
+</script>
+</body>
+</html>
