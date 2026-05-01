@@ -97,7 +97,7 @@
                 <span class="nav-text">Earnings</span>
             </a>
 
-            <a href="#" class="nav-link-custom">
+            <a href="{% url 'my_deliveries'%}" class="nav-link-custom"{% if request.resolver_match.url_name == 'my_deliveries' %}active{% endif %}>
                 <span class="material-symbols-outlined">directions_car</span>
                 <span class="nav-text">Deliveries</span>
             </a>

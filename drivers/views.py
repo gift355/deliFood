@@ -5,6 +5,7 @@ from datetime import timedelta
 from django.db.models import Sum
 from .forms import DriverProfileForm
 from .models import DriverProfile, Transaction
+from orders.models import Order
 
 
 # Create your views here.
@@ -77,3 +78,27 @@ def driver_earnings(request):
     }
 
     return render(request, 'drivers/driver_earnings.html', context)
+
+@login_required
+def my_deliveries(request):
+    # 1. Safely get the driver profile tied to the user
+    # This ensures only registered drivers can see this page
+    driver = get_object_or_404(DriverProfile, user=request.user)
+    
+    # 2. Get active orders (Assigned or Picked Up)
+    # excluded 'completed' and 'cancelled' so the list stays relevant
+    # We order by -updated_at so the most recent activity is at the top
+    active_orders = Order.objects.filter(
+        driver=driver
+    ).exclude(
+        status__in=['completed', 'cancelled']
+    ).order_by('-updated_at')
+
+    # 3. Context for the template
+    context = {
+        'orders': active_orders,
+        'active_count': active_orders.count(),
+        'driver': driver,
+    }
+    
+    return render(request, 'drivers/my_deliveries.html', context)

@@ -1,0 +1,94 @@
+{% extends 'drivers/base_driver.html' %}
+
+{% block title %}Order #{{ order.order_number }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Back Button -->
+    <a href="{% url 'my_deliveries' %}" class="btn btn-link text-decoration-none text-dark mb-4 p-0">
+        <span class="material-symbols-outlined v-align-middle">arrow_back</span> Back to deliveries
+    </a>
+
+    <div class="row g-4">
+        <!-- Main Order Info -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="fw-800 mb-0">Order #{{ order.order_number }}</h2>
+                    <span class="badge rounded-pill px-3 py-2 bg-light text-dark border">
+                        {{ order.get_status_display }}
+                    </span>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-sm-6">
+                        <label class="text-muted small fw-bold d-block">PICKUP FROM</label>
+                        <p class="fw-bold fs-5 mb-1">Restaurant Name</p> 
+                        <p class="text-muted small">Restaurant Address Placeholder</p>
+                    </div>
+                    <div class="col-sm-6 text-sm-end">
+                        <label class="text-muted small fw-bold d-block">PLACED ON</label>
+                        <p class="mb-0">{{ order.created_at|date:"M d, Y" }}</p>
+                        <p class="text-muted small">{{ order.created_at|time:"H:i" }}</p>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <div class="mb-4">
+                    <label class="text-muted small fw-bold d-block mb-2">DELIVERY ITEMS</label>
+                    <!-- Placeholder for Menu Items (Teammates' part) -->
+                    <div class="bg-light rounded-3 p-3 text-center border-dashed">
+                        <p class="text-muted mb-0 italic">Item list will appear once Menu app is linked.</p>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-muted small fw-bold d-block mb-1">DELIVERY ADDRESS</label>
+                    <div class="d-flex align-items-start">
+                        <span class="material-symbols-outlined me-2 text-primary">location_on</span>
+                        <p class="fs-6">{{ order.delivery_address }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Actions & Summary -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+                <h5 class="fw-bold mb-3">Earnings Summary</h5>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Delivery Fee</span>
+                    <span>₦{{ order.payout_amount }}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-3">
+                    <span class="text-muted">Bonus/Tip</span>
+                    <span>₦0.00</span>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="fw-bold">Total Payout</span>
+                    <h4 class="fw-800 text-primary mb-0">₦{{ order.payout_amount }}</h4>
+                </div>
+            </div>
+
+            <!-- Contextual Action Button -->
+            {% if order.status == 'assigned' %}
+                <a href="{% url 'update_order_status' order.id 'picked_up' %}" class="btn btn-dark w-100 rounded-pill py-3 fw-bold shadow-sm">
+                    Confirm Pickup at Restaurant
+                </a>
+            {% elif order.status == 'picked_up' %}
+                <a href="{% url 'update_order_status' order.id 'completed' %}" class="btn btn-success w-100 rounded-pill py-3 fw-bold shadow-sm">
+                    Mark as Delivered
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .border-dashed { border: 2px dashed #dee2e6; }
+    .fw-800 { font-weight: 800; }
+    .v-align-middle { vertical-align: middle; }
+</style>
+{% endblock %}
