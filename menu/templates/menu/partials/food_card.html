@@ -1,0 +1,93 @@
+{% load static %}
+
+<!-- The Sleek Purple Food Card -->
+<div class="food-card" style="
+    width: 100%; 
+    max-width: 350px; 
+    background: #ffffff; 
+    border-radius: 30px; 
+    padding: 15px; 
+    box-shadow: 0 10px 30px rgba(73, 0, 92, 0.05); 
+    border: 1px solid #f8f0fb; 
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+">
+    
+    <!-- Image Container with Category Badge -->
+    <div style="position: relative; width: 100%; height: 200px; border-radius: 20px; overflow: hidden;">
+        {% if item.image %}
+            <img src="{{ item.image.url }}" alt="{{ item.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+        {% else %}
+            <!-- Placeholder for when teammates haven't uploaded images yet -->
+            <div style="width: 100%; height: 100%; background: #f3e5f5; display: flex; align-items: center; justify-content: center; color: #49005c;">
+                <span class="material-symbols-outlined" style="font-size: 40px;">fastfood</span>
+            </div>
+        {% endif %}
+        
+        <!-- Category Badge -->
+        <div style="
+            position: absolute; 
+            top: 12px; 
+            left: 12px; 
+            background: rgba(73, 0, 92, 0.7); 
+            backdrop-filter: blur(5px); 
+            color: #ffffff; 
+            padding: 4px 12px; 
+            border-radius: 12px; 
+            font-size: 0.75rem; 
+            font-weight: 700;
+            text-transform: uppercase;
+        ">
+            {{ item.get_category_display }}
+        </div>
+    </div>
+
+    <!-- Card Body Content -->
+    <div style="padding: 18px 5px 5px 5px; flex-grow: 1; display: flex; flex-direction: column;">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+            <h5 style="margin: 0; font-family: 'Manrope', sans-serif; font-weight: 800; color: #1a1a1a; font-size: 1.15rem;">
+                {{ item.name }}
+            </h5>
+            <span style="color: #49005c; font-weight: 800; font-size: 1.1rem;">
+                ₦{{ item.price }}
+            </span>
+        </div>
+        
+        <p style="color: #777; font-family: 'Inter', sans-serif; font-size: 0.85rem; line-height: 1.5; margin-bottom: 15px; flex-grow: 1;">
+            {{ item.description|truncatechars:75 }}
+        </p>
+
+        <!-- Social Proof/Restaurant Tag -->
+        <div class="d-flex gap-2 mb-3">
+            <a href="{% url 'restaurant:restaurant_detail' item.restaurant.slug %}" class="text-decoration-none">
+                <div style="background: #fdf8ff; color: #49005c; padding: 3px 10px; border-radius: 8px; font-size: 0.7rem; font-weight: 700; border: 1px solid #f3e5f5;">
+                    {{ item.restaurant.name }}
+                </div>
+            </a>
+        </div>
+
+        <!-- Action Button -->
+        <a href="{% url 'menu:food_detail' item.id %}" class="btn w-100" style="
+            background: #49005c; 
+            color: #ffffff; 
+            border-radius: 18px; 
+            font-weight: 700; 
+            padding: 12px; 
+            border: none;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(73, 0, 92, 0.15);
+        ">
+            View Details
+        </a>
+    </div>
+</div>
+
+<style>
+    /* Subtle hover effect for the entire card */
+    .food-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 35px rgba(73, 0, 92, 0.1) !important;
+    }
+</style>

@@ -29,4 +29,7 @@ urlpatterns = [
     path('', landing_view),  
     path('users/', include('users.urls')),
     path('driver/', include('drivers.urls')),
+    path('restaurant/', include('restaurant.urls')),
+    path('menu/', include('menu.urls')),
+    path('orders/', include('orders.urls')),
 ]

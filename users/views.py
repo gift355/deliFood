@@ -4,6 +4,7 @@ from .forms import CustomerSignupForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from menu.models import FoodItem
 # Create your views here.
 
 def landing_view(request):
@@ -49,7 +50,11 @@ def login_view(request):
     return render(request, 'users/login.html', {'form': form})
 
 def home_view(request):
-    return render(request, 'users/home.html')
+    food_items = FoodItem.objects.filter(available=True).order_by('-id')[:12]
+    context = {
+        'food_items': food_items,
+    }
+    return render(request, 'users/home.html', context)
 
 
 
