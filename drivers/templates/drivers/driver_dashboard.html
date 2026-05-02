@@ -118,7 +118,9 @@
                         <td class="text-muted small">{{ order.address|truncatechars:40 }}</td>
                         <td class="fw-bold text-success">₦{{ order.payout }}</td>
                         <td class="text-end pe-4">
-                            <button class="btn btn-sm btn-dark rounded-pill px-4">Accept</button>
+                            <a herf="{% url 'accept_order' order.id %}" class="btn btn-sm btn-dark rounded-pill px-4">
+                                Accept
+                            </a>
                         </td>
                     </tr>
                     {% empty %}

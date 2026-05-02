@@ -4,6 +4,7 @@ from django.shortcuts import redirect, get_object_or_404
 from django.contrib import messages
 from .models import Order
 
+
 def update_order_status(request, order_id, new_status):
     # 1. Get the order and verify the logged-in driver owns it
     order = get_object_or_404(Order, id=order_id, driver__user=request.user)
@@ -37,3 +38,28 @@ def order_detail(request, order_number):
         'order': order,
     }
     return render(request, 'orders/order_detail.html', context)
+
+@login_required
+def accept_order(request, order_id):
+    # 1. Get the order or 404 if it doesn't exist
+    order = get_object_or_404(Order, id=order_id)
+    
+    # 2. Check if the order is still available
+    if order.status != 'pending':
+        messages.error(request, "This order has already been accepted by another driver.")
+        return redirect('driver_dashboard')
+
+    try:
+        # 3. Attempt to link the driver profile
+        driver_profile = request.user.driverprofile
+        order.driver = driver_profile
+        order.status = 'assigned'
+        order.save()
+        
+        messages.success(request, f"Order #{order.order_number} accepted successfully!")
+        return redirect('my_deliveries')
+        
+    except AttributeError:
+        # This catches users who somehow bypassed the dashboard's restrictions
+        messages.error(request, "Error: You do not have an active Driver Profile.")
+        return redirect('home')
