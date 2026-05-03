@@ -3,6 +3,8 @@ from .views import signup_view, login_view, landing_view, home_view
 from django.contrib.auth import views as auth_views
 
 
+
+
 urlpatterns = [
     path('signup/', signup_view, name='signup'),
     path('login/', login_view, name='login'),

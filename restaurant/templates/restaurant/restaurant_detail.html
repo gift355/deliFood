@@ -8,12 +8,17 @@
     
     <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     
     <style>
-        :root { --primary: #49005c; --font-headline: 'Manrope', sans-serif; }
+        :root { 
+            --primary: #49005c; 
+            --dark-text: #1a0021; /* Extra dark for bold letters */
+            --font-headline: 'Manrope', sans-serif; 
+        }
         body { font-family: 'Inter', sans-serif; background-color: #fdf8ff; margin: 0; }
 
-        /* Cover Image logic */
+        /* Responsive Cover Photo */
         .cover-photo {
             height: 320px;
             width: 100%;
@@ -24,22 +29,65 @@
 
         .profile-header-container {
             position: relative;
-            margin-top: -80px; /* Overlap effect */
+            margin-top: -100px; /* Pulls the logo and text up over the photo */
             padding-bottom: 2rem;
+            text-align: center; /* Center for mobile by default */
         }
 
-        /* Logo logic (Circular Profile Photo) */
+        /* Logo Logic */
         .restaurant-logo {
-            width: 160px;
-            height: 160px;
+            width: 180px;
+            height: 180px;
             border-radius: 50%;
-            border: 6px solid white;
+            border: 8px solid white;
             object-fit: cover;
             background-color: white;
-            box-shadow: 0 10px 25px rgba(73, 0, 92, 0.1);
+            box-shadow: 0 15px 35px rgba(73, 0, 92, 0.15);
+            margin-bottom: 15px;
         }
 
-        .restaurant-info { padding-top: 90px; }
+        /* Dark Bold Typography */
+        .restaurant-name {
+            font-family: var(--font-headline);
+            font-weight: 800; 
+            color: var(--dark-text);
+            font-size: 2.5rem;
+            letter-spacing: -1px;
+            margin-bottom: 8px;
+        }
+
+        .restaurant-info-box {
+            background: white;
+            padding: 30px;
+            border-radius: 30px;
+            box-shadow: 0 10px 40px rgba(73, 0, 92, 0.04);
+            margin-bottom: 2rem;
+        }
+
+        /* Desktop Adjustments */
+        @media (min-width: 768px) {
+            .profile-header-container {
+                text-align: left; /* Align left on laptop/desktop */
+            }
+            .restaurant-logo {
+                width: 200px;
+                height: 200px;
+            }
+            .restaurant-name {
+                font-size: 3.5rem;
+            }
+            .restaurant-info-content {
+                padding-top: 110px;
+            }
+        }
+
+        /* Mobile specific spacing */
+        @media (max-width: 767px) {
+            .cover-photo { height: 200px; }
+            .restaurant-name { font-size: 1.8rem; }
+            .restaurant-logo { width: 140px; height: 140px; }
+            .profile-header-container { margin-top: -70px; }
+        }
     </style>
 </head>
 <body>
@@ -48,43 +96,56 @@
     <div class="cover-photo"></div>
 
     <div class="container profile-header-container">
-        <div class="row align-items-end">
+        <div class="row align-items-start justify-content-center justify-content-md-start">
             <div class="col-auto">
-                <!-- Using your 'logo' field -->
                 <img src="{{ restaurant.logo.url|default:'/static/images/default_logo.png' }}" 
                      alt="{{ restaurant.name }}" 
                      class="restaurant-logo">
             </div>
-            <div class="col restaurant-info">
-                <h1 style="font-family: var(--font-headline); font-weight: 800; color: var(--primary); margin-bottom: 5px;">
-                    {{ restaurant.name }}
-                </h1>
-                <p class="text-muted fw-bold mb-1">
-                    <span class="material-symbols-outlined align-middle" style="font-size: 18px;">location_on</span>
-                    {{ restaurant.address }}
-                </p>
-                <p class="small text-muted">{{ restaurant.description }}</p>
+            
+            <div class="col-12 col-md restaurant-info-content">
+                <div class="restaurant-info-box">
+                    <h1 class="restaurant-name">
+                        {{ restaurant.name }}
+                    </h1>
+                    
+                    <div class="d-flex flex-wrap justify-content-center justify-content-md-start gap-3 mb-3">
+                        <p class="text-muted fw-bold mb-0">
+                            <span class="material-symbols-outlined align-middle" style="color: var(--primary);">location_on</span>
+                            {{ restaurant.address }}
+                        </p>
+                        <p class="text-muted fw-bold mb-0">
+                            <span class="material-symbols-outlined align-middle" style="color: var(--primary);">call</span>
+                            {{ restaurant.phone_number }}
+                        </p>
+                    </div>
+                    
+                    <p class="lead text-secondary" style="max-width: 700px; margin: 0 auto 0 0;">
+                        {{ restaurant.description }}
+                    </p>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Menu Grid -->
     <section class="container py-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h3 class="fw-bold mb-0" style="font-family: var(--font-headline); color: var(--primary);">Full Menu</h3>
-            <div class="text-muted small">
-                <span class="material-symbols-outlined align-middle">call</span> {{ restaurant.phone_number }}
-            </div>
-        </div>
+        <h3 class="fw-bold mb-4" style="font-family: var(--font-headline); color: var(--primary); font-size: 1.8rem;">
+            Explore Our Menu
+        </h3>
         
-        <div class="row g-4">
-            {% for item in restaurant.food_items.all %}
-                <div class="col-12 col-md-6 col-lg-4">
-                    {% include 'menu/partials/food_card.html' %}
+        <div class="row g-3 g-md-4">
+            {% for item in restaurant.menu_items.all %}
+                <!-- 2 items per row on mobile (col-6), 3 on tablets, 4 on desktop -->
+                <div class="col-6 col-md-4 col-lg-3">
+                    {% include 'menu/partials/food_card.html' with items=items %}
                 </div>
             {% empty %}
                 <div class="col-12 text-center py-5">
-                    <p class="text-muted italic">This kitchen is currently being prepared.</p>
+                    <div class="p-5 rounded-5" style="background: #f8f1fa;">
+                        <span class="material-symbols-outlined mb-3" style="font-size: 48px; color: var(--primary);">restaurant_menu</span>
+                        <p class="text-muted italic h5">This kitchen is currently being prepared. Check back soon!</p>
+                    </div>
                 </div>
             {% endfor %}
         </div>
