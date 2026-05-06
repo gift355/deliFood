@@ -1,0 +1,185 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Your Cart | DeliFood</title>
+    
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+
+    <style>
+        :root { 
+            --primary: #49005c; 
+            --font-headline: 'Manrope', sans-serif; 
+            --font-body: 'Inter', sans-serif; 
+            --bg-light: #fdf8ff;
+        }
+        
+        body { 
+            font-family: var(--font-body); 
+            background-color: var(--bg-light); 
+            color: #333;
+        }
+
+        .cart-header {
+            background: white;
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(73, 0, 92, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .cart-card {
+            background: white;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(73, 0, 92, 0.05);
+            border: none;
+        }
+
+        .item-row {
+            padding: 1.2rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .item-row:last-child {
+            border-bottom: none;
+        }
+
+        .btn-checkout {
+            background: var(--primary);
+            color: white;
+            border-radius: 18px;
+            padding: 18px;
+            font-weight: 700;
+            font-family: var(--font-headline);
+            border: none;
+            transition: 0.3s;
+        }
+
+        .btn-checkout:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        /* Mobile specific adjustments */
+        @media (max-width: 576px) {
+            .cart-card {
+                border-radius: 0;
+                box-shadow: none;
+                background: transparent;
+            }
+            .item-row {
+                background: white;
+                margin-bottom: 10px;
+                padding: 15px;
+                border-radius: 15px;
+                border-bottom: none;
+            }
+            .container {
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Simple Nav -->
+    <header class="cart-header">
+        <div class="container d-flex align-items-center">
+            <a href="{% url 'home' %}" class="text-decoration-none d-flex align-items-center" style="color: var(--primary);">
+                <span class="material-symbols-outlined me-2">arrow_back</span>
+                <span class="fw-bold">Continue Shopping</span>
+            </a>
+            <h5 class="mb-0 mx-auto fw-bold" style="font-family: var(--font-headline);">My Cart</h5>
+        </div>
+    </header>
+
+    <main class="container py-4">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show rounded-4 shadow-sm" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% if cart.items.exists %}
+            <div class="row g-4">
+                <!-- Cart Items List -->
+                <div class="col-lg-8">
+                    <div class="cart-card p-4">
+                        <div class="d-flex align-items-center mb-4">
+                            <span class="material-symbols-outlined me-2 text-muted">restaurant</span>
+                            <span class="text-muted">Ordering from</span>
+                            <strong class="ms-2 text-dark">{{ cart.restaurant.name }}</strong>
+                        </div>
+
+                        {% for item in cart.items.all %}
+                            <div class="item-row d-flex align-items-center">
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1 fw-bold">{{ item.food_item.name }}</h6>
+                                    <p class="mb-0 text-muted small">Quantity: {{ item.quantity }} × ₦{{ item.food_item.price }}</p>
+                                </div>
+                                <div class="text-end">
+                                    <p class="mb-1 fw-bold text-dark">₦{{ item.get_cost }}</p>
+                                    <a href="{% url 'remove_from_cart' item.id %}" class="text-danger small text-decoration-none d-flex align-items-center justify-content-end">
+                                        <span class="material-symbols-outlined me-1" style="font-size: 18px;">delete</span>
+                                        Remove
+                                    </a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Order Summary Sidebar -->
+                <div class="col-lg-4">
+                    <div class="cart-card p-4 sticky-top" style="top: 100px;">
+                        <h5 class="fw-bold mb-4" style="font-family: var(--font-headline);">Order Summary</h5>
+                        
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Subtotal</span>
+                            <span class="fw-bold">₦{{ cart.total_price }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-4">
+                            <span class="text-muted">Delivery Fee</span>
+                            <span class="text-success small">Calculated at next step</span>
+                        </div>
+                        
+                        <hr>
+                        
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h4 class="fw-bold mb-0">Total</h4>
+                            <h4 class="fw-bold mb-0" style="color: var(--primary);">₦{{ cart.total_price }}</h4>
+                        </div>
+                        
+                        <button class="btn btn-checkout w-100">
+                            Proceed to Checkout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <!-- Empty State -->
+            <div class="text-center py-5">
+                <div class="mb-4 d-inline-block p-4 rounded-circle" style="background: #f3e5f5;">
+                    <span class="material-symbols-outlined" style="font-size: 64px; color: var(--primary);">shopping_cart</span>
+                </div>
+                <h3 class="fw-bold" style="font-family: var(--font-headline);">Your cart is empty</h3>
+                <p class="text-muted mb-4">Looks like you haven't added anything to your cart yet.</p>
+                <a href="{% url 'home' %}" class="btn btn-primary rounded-pill px-5 py-3 fw-bold" style="background: var(--primary); border: none;">
+                    Browse Restaurants
+                </a>
+            </div>
+        {% endif %}
+    </main>
+
+    <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

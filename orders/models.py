@@ -1,7 +1,7 @@
 # Create your models here.
 from django.db import models
 from django.conf import settings
-from drivers.models import DriverProfile # Import your driver profile
+from drivers.models import DriverProfile # Importing driver profile
 
 class Order(models.Model):
     STATUS_CHOICES = [

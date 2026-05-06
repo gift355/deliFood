@@ -37,7 +37,7 @@
 
         .logo-img { height: 65px; width: auto; }
 
-        /* Hero Section with Food Focus */
+        /* Hero Section */
         .hero {
             padding: 4rem 5%;
             background: linear-gradient(135deg, #fdf8ff 0%, #ffffff 100%);
@@ -58,33 +58,35 @@
             margin-bottom: 1.5rem;
         }
 
-        /* Search Bar styling */
+        /* Sleek Search Bar styling */
         .search-container {
             background: white;
-            padding: 8px;
+            padding: 5px 5px 5px 15px;
             border-radius: 50px;
             box-shadow: 0 10px 30px rgba(73, 0, 92, 0.1);
             display: flex;
             align-items: center;
             margin-top: 2rem;
             border: 1px solid #eee;
+            max-width: 600px;
         }
 
         .search-input {
             border: none;
             flex: 1;
-            padding: 10px 20px;
+            padding: 8px 10px;
             outline: none;
-            font-size: 1rem;
+            font-size: 0.95rem;
         }
 
         .btn-search {
             background: var(--primary);
             color: white;
             border: none;
-            padding: 12px 30px;
+            padding: 8px 25px;
             border-radius: 50px;
             font-weight: 700;
+            font-size: 0.9rem;
             transition: 0.3s;
         }
 
@@ -107,8 +109,6 @@
             transform: translateY(-5px);
         }
 
-        .category-card i { font-size: 2.5rem; margin-bottom: 10px; display: block; }
-
         .hero-image-slider {
             width: 100%;
             max-width: 420px;
@@ -127,11 +127,7 @@
             50% { transform: translateY(-15px); }
             100% { transform: translateY(0px); }
         }
-        .carousel-fade .carousel-item {
-            transition-duration: 1s;
-        }
 
-        /* Logout button reset to look like a menu link */
         .logout-btn {
             background: none;
             border: none;
@@ -145,7 +141,7 @@
         @media (max-width: 991px) {
             .hero { flex-direction: column; text-align: center; padding-top: 2rem; }
             .headline { font-size: 2.5rem; }
-            .hero-image { margin-top: 3rem; }
+            .hero-image-slider { margin-top: 3rem; }
         }
     </style>
 </head>
@@ -163,7 +159,12 @@
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end border-0 shadow-sm mt-2">
                     <li><a class="dropdown-item" href="#">Orders</a></li>
-                    <li><a class="dropdown-item" href="#">Settings</a></li>
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center" href="{% url 'profile' %}">
+                            <span class="material-symbols-outlined me-2" style="font-size: 18px;">person</span>
+                            Profile
+                        </a>
+                    </li>
                     <li><hr class="dropdown-divider"></li>
                     <li>
                         <form action="{% url 'logout' %}" method="post" class="dropdown-item m-0">
@@ -181,11 +182,18 @@
             <h1 class="headline">Premium Meals, <br>Delivered Daily.</h1>
             <p class="sub-text text-muted fs-5">Experience the finest cuisine from the best restaurants in town, delivered right to your doorstep.</p>
             
-            <div class="search-container">
-                <span class="material-symbols-outlined ms-3 text-muted">location_on</span>
-                <input type="text" class="search-input" placeholder="Enter your delivery address...">
-                <button class="btn-search">Find Food</button>
-            </div>
+            <!-- SLEEK UPDATED SEARCH SECTION -->
+            <form action="{% url 'home' %}" method="GET" class="search-container">
+                <span class="material-symbols-outlined text-muted" style="font-size: 20px;">search</span>
+                <input type="text" name="q" class="search-input" value="{{ food_query }}" placeholder="Search by food...">
+                
+                <div style="border-left: 1px solid #eee; height: 20px; margin: 0 10px;"></div>
+                
+                <span class="material-symbols-outlined text-muted" style="font-size: 20px;">location_on</span>
+                <input type="text" name="address" class="search-input" style="max-width: 130px;" value="{{ address_query }}" placeholder="Location...">
+                
+                <button type="submit" class="btn-search">Search</button>
+            </form>
         </div>
 
         <div class="hero-image-slider">

@@ -108,10 +108,13 @@
                 <span class="material-symbols-outlined">home</span>
                 <span class="nav-text">Back to Home</span>
             </a>
-            <a href="{% url 'logout' %}" class="nav-link-custom text-danger">
-                <span class="material-symbols-outlined">logout</span>
-                <span class="nav-text">Logout</span>
-            </a>
+            <form action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="nav-link-custom text-danger border-0 bg-transparent w-100" style="text-align: left;">
+            <span class="material-symbols-outlined">logout</span>
+            <span class="nav-text">Logout</span>
+        </button>
+    </form>
         </div>
     </aside>
 

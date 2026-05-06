@@ -1,0 +1,113 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>{{ user.username }} | Profile</title>
+    
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@800&family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
+    
+    <style>
+        :root { --primary: #49005c; --dark: #1a0021; }
+        body { font-family: 'Inter', sans-serif; background-color: #fdf8ff; color: var(--dark); }
+        
+        .profile-container { max-width: 800px; margin: 60px auto; padding: 0 20px; }
+        
+        .glass-card {
+            background: white;
+            border-radius: 40px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(73, 0, 92, 0.04);
+        }
+
+        .info-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: #9c27b0;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .info-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            color: var(--dark);
+        }
+
+        .avatar-box {
+            width: 80px;
+            height: 80px;
+            background: var(--primary);
+            color: white;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container profile-container">
+    <div class="glass-card">
+        <div class="avatar-box">
+            {{ user.username|slice:":1"|upper }}
+        </div>
+        
+        <h1 style="font-family: 'Manrope'; font-weight: 800; margin-bottom: 40px;">Account Details</h1>
+
+        <div class="row">
+            <div class="col-md-6">
+                <span class="info-label">Full Name</span>
+                <p class="info-value">{{ user.first_name }} {{ user.last_name }}</p>
+
+                <span class="info-label">Email Address</span>
+                <p class="info-value">{{ user.email }}</p>
+            </div>
+            <div class="col-md-6">
+                <span class="info-label">Username</span>
+                <p class="info-value">@{{ user.username }}</p>
+
+                <span class="info-label">Account Role</span>
+                <p class="info-value text-capitalize">{{ user.role }}</p>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <span class="info-label">Address</span>
+            <p class="info-value">
+                <!-- Pulling address from CustomerProfile if it exists -->
+                {% if user.customer_profile %}
+                    {{ user.customer_profile.address }}
+                    {% if user.customer_profile.city %}
+                        , {{ user.customer_profile.city }}
+                    {% endif %}
+                {% else %}
+                    No address provided.
+                {% endif %}
+            </p>
+        </div>
+
+        <hr class="my-4" style="opacity: 0.1;">
+        
+        <div class="d-flex gap-3">
+            <a href="{% url 'home' %}" class="btn btn-dark rounded-pill px-4 py-2 fw-bold">Back to Menu</a>
+            <form action="{% url 'logout' %}" method="post" style="display: inline;">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-outline-danger rounded-pill px-4 py-2 fw-bold">
+        Logout
+    </button>
+</form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

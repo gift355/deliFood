@@ -5,6 +5,8 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from menu.models import FoodItem
+from restaurant.models import Restaurant
+from django.db.models import Q
 # Create your views here.
 
 def landing_view(request):
@@ -49,12 +51,49 @@ def login_view(request):
         
     return render(request, 'users/login.html', {'form': form})
 
-def home_view(request):
+#def home_view(request):
     food_items = FoodItem.objects.filter(available=True).order_by('-id')[:12]
     context = {
         'food_items': food_items,
     }
     return render(request, 'users/home.html', context)
+def home_view(request):
+    # 1. Capture the search inputs from the GET request
+    # 'address' matches the name="" attribute in your delivery address bar
+    address_query = request.GET.get('address', '').strip()
+    # 'q' can be used for a general food/restaurant name search bar
+    food_query = request.GET.get('q', '').strip()
 
+    # 2. Start with all available food items
+    food_items = FoodItem.objects.filter(available=True, restaurant__is_active=True)
+
+    # 3. Filter by Location (Address/City)
+    # This filters food items based on their restaurant's address
+    if address_query:
+        food_items = food_items.filter(restaurant__address__icontains=address_query)
+
+    # 4. Filter by Food Name or Restaurant Name
+    # This allows a user to search for "Pizza" or "Mama Calabar"
+    if food_query:
+        food_items = food_items.filter(
+            Q(name__icontains=food_query) | 
+            Q(restaurant__name__icontains=food_query) |
+            Q(description__icontains=food_query)
+        )
+
+    # 5. Order and Limit (keeping your original 12-item limit)
+    food_items = food_items.order_by('-id')[:12]
+
+    context = {
+        'food_items': food_items,
+        'address_query': address_query,
+        'food_query': food_query,
+    }
+    return render(request, 'users/home.html', context)
+
+
+@login_required
+def profile_view(request):
+    return render(request, 'users/profile.html', {'user': request.user})
 
 
