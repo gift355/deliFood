@@ -46,6 +46,14 @@ def driver_dashboard(request):
     # 1. Get the driver profile (or 404 if they aren't registered as a driver yet)
     # This prevents the page from crashing if a regular user tries to access it
     driver = get_object_or_404(DriverProfile, user=request.user)
+
+    #Fetch orders from the market place
+    available_orders = Order.objects.filter(status='pending', driver__isnull=True).order_by('-created_at')
+
+    #Fetch orders currrently assugned to the driver
+    active_orders = Order.objects.filter(driver=driver,status__in=['assigned', 'picked_up']).order_by('-updated_at')
+    total_deliveries = Order.objects.filter(driver=driver, status='completed').count()
+
     
     # 2. Context dictionary to send data to the HTML
     context = {
@@ -85,15 +93,15 @@ def my_deliveries(request):
     # This ensures only registered drivers can see this page
     driver = get_object_or_404(DriverProfile, user=request.user)
     
-    # 2. Get active orders (Assigned or Picked Up)
-    # excluded 'completed' and 'cancelled' so the list stays relevant
-    # We order by -updated_at so the most recent activity is at the top
+    
+   # 2. Get active orders AND pre-load the Restaurant info 
+    # This follows the bridge: Order -> OrderItem (items) -> FoodItem -> Restaurant
     active_orders = Order.objects.filter(
         driver=driver
     ).exclude(
         status__in=['completed', 'cancelled']
-    ).order_by('-updated_at')
-
+    ).prefetch_related('items__food_item__restaurant').order_by('-updated_at')
+    
     # 3. Context for the template
     context = {
         'orders': active_orders,

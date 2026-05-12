@@ -114,11 +114,11 @@
                 <tbody>
                     {% for order in available_orders %}
                     <tr style="border-bottom: 1px solid #f8f9fa;">
-                        <td class="ps-4 fw-bold">#{{ order.id }}</td>
-                        <td class="text-muted small">{{ order.address|truncatechars:40 }}</td>
-                        <td class="fw-bold text-success">₦{{ order.payout }}</td>
+                        <td class="ps-4 fw-bold">#{{ order.order_number }}</td>
+                        <td class="text-muted small">{{ order.delivery_address|truncatechars:40 }}</td>
+                        <td class="fw-bold text-success">₦{{ order.payout_amount }}</td>
                         <td class="text-end pe-4">
-                            <a herf="{% url 'accept_order' order.id %}" class="btn btn-sm btn-dark rounded-pill px-4">
+                            <a href="{% url 'accept_order' order.id %}" class="btn btn-sm btn-dark rounded-pill px-4">
                                 Accept
                             </a>
                         </td>
