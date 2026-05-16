@@ -75,9 +75,10 @@
                     
                     <div class="action-buttons">
                         {% if order.status == 'assigned' %}
-                            <a href="{% url 'update_order_status' order.id 'picked_up' %}" class="btn btn-dark rounded-pill px-4 fw-bold">
+                            <a href="{% url 'pickup_delivery' order.id %}" class="btn btn-dark rounded-pill px-4 fw-bold">
                                 Confirm Pickup
                             </a>
+                        
                         {% elif order.status == 'picked_up' %}
                             <a href="{% url 'complete_delivery' order.id %}" class="btn btn-success rounded-pill px-4 fw-bold">
                                 Finish Delivery

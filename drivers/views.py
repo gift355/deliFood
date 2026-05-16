@@ -6,6 +6,7 @@ from django.db.models import Sum
 from .forms import DriverProfileForm
 from .models import DriverProfile, Transaction
 from orders.models import Order
+from delivery.models import Delivery
 
 
 # Create your views here.
@@ -89,20 +90,14 @@ def driver_earnings(request):
 
 @login_required
 def my_deliveries(request):
-    # 1. Safely get the driver profile tied to the user
-    # This ensures only registered drivers can see this page
     driver = get_object_or_404(DriverProfile, user=request.user)
     
-    
-   # 2. Get active orders AND pre-load the Restaurant info 
-    # This follows the bridge: Order -> OrderItem (items) -> FoodItem -> Restaurant
+    # We query the ORDER model because that's what you're using in Admin
     active_orders = Order.objects.filter(
-        driver=driver
-    ).exclude(
-        status__in=['completed', 'cancelled']
+        driver=driver,
+        status__in=['assigned', 'picked_up'] # Only show active work
     ).prefetch_related('items__food_item__restaurant').order_by('-updated_at')
     
-    # 3. Context for the template
     context = {
         'orders': active_orders,
         'active_count': active_orders.count(),

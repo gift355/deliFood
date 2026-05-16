@@ -19,7 +19,8 @@ urlpatterns = [
     path('restaurant/', include('restaurant.urls')),
     path('menu/', include('menu.urls')),
     path('orders/', include('orders.urls')),
-    path('cart/', include('cart.urls'))
+    path('cart/', include('cart.urls')),
+    path('delivery/', include('delivery.urls'))
 ]
 
 if settings.DEBUG:
