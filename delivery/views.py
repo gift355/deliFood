@@ -3,6 +3,7 @@ from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
 from .models import Delivery
+from drivers.models import DriverProfile
 from django.utils import timezone
 
 def accept_delivery(request, pk):
@@ -26,7 +27,8 @@ def accept_delivery(request, pk):
 
 # 2. PICKUP
 def pickup_delivery(request, pk):
-    delivery = get_object_or_404(Delivery, pk=pk, driver=request.user.driverprofile)
+    driver_profile = get_object_or_404(DriverProfile, user=request.user)
+    delivery = get_object_or_404(Delivery, order__id=pk, driver=driver_profile)
     delivery.status = 'picked_up'
     delivery.picked_up_at = timezone.now()
     delivery.save()
@@ -40,16 +42,27 @@ def pickup_delivery(request, pk):
 
 # 3. COMPLETE
 def complete_delivery(request, pk):
-    delivery = get_object_or_404(Delivery, pk=pk, driver=request.user.driverprofile)
-    delivery.status = 'delivered'
-    delivery.delivered_at = timezone.now()
-    delivery.save()
+    driver_profile = get_object_or_404(DriverProfile, user=request.user)
+    delivery = get_object_or_404(Delivery, order__id=pk, driver=driver_profile)
+    with transaction.atomic():
+        delivery.status = 'delivered'
+        delivery.delivered_at = timezone.now()
+        delivery.save()
 
     # 2. Update Order
-    order = delivery.order
-    order.status = 'completed' # or 'delivered' depending on your Choice list
-    order.save()
+        order = delivery.order
+        order.status = 'completed' # or 'delivered' depending on your Choice list
+        order.save()
 
-    # You could also trigger payment logic here!
-    messages.success(request, "Delivery complete! Great job.")
+        # WALLET TOP-UP LOGIC: Add the specific trip fee to the driver's total
+        if delivery.delivery_fee:
+            driver_profile.total_earnings += delivery.delivery_fee
+            driver_profile.save()
+            payout_text = f"₦{delivery.delivery_fee}"
+        else:
+            payout_text = "₦0.00"
+
+    messages.success(request, f"Delivery complete! Great job. {payout_text} added to your balance.")
     return redirect('my_deliveries')
+
+   
