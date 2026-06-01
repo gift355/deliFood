@@ -11,6 +11,7 @@ class User(AbstractUser):
         ADMIN = "ADMIN", "admin"
         DRIVER = "DRIVER", "driver"
         CUSTOMER = "CUSTOMER", "customer"
+        RESTAURANT = "RESTAURANT", "restaurant"
 
     # These are now correctly INSIDE the User class
     role = models.CharField(
@@ -57,3 +58,20 @@ class CustomerProfile(models.Model):
 
     def __str__(self):
         return f"Profile for {self.user.username}"
+    
+class RestaurantVendorManager(models.Manager):
+    """Manager to return only user with restaurant vendor role."""
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset(*args, **kwargs).filter(role=User.Role.RESTAURANT)
+    
+class RestaurantVendor(User):
+    """Proxy model for Restaurant vendor users."""
+    objects = RestaurantVendorManager()
+
+    class Meta:
+        proxy = True
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.role = User.Role.RESTAURANT
+        return super().save(*args, **kwargs)
