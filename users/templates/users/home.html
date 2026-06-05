@@ -1,17 +1,25 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>DeliFood | Fresh Meals Delivered</title>
-    
-    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
 
     <style>
         :root {
+            --accent: #F9B800;
+            --highlight: #F3E100;
+            --neutral: #7D747C;
+            --white: #ffffff;
             --primary: #49005c;
             --primary-container: #631f75;
             --background: #ffffff;
@@ -27,15 +35,19 @@
 
         /* Modern Navbar */
         .navbar {
-            padding: 1rem 5%;
-            background: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            padding: 0.6rem 5%;
+            background: var(--primary);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
             position: sticky;
             top: 0;
             z-index: 1000;
         }
 
-        .logo-img { height: 65px; width: auto; }
+        .logo-img {
+            height: 65px;
+            width: auto;
+            border-radius: 50%;
+        }
 
         /* Hero Section */
         .hero {
@@ -47,7 +59,9 @@
             min-height: 70vh;
         }
 
-        .hero-text { max-width: 550px; }
+        .hero-text {
+            max-width: 550px;
+        }
 
         .headline {
             font-family: var(--font-headline);
@@ -68,7 +82,8 @@
             align-items: center;
             margin-top: 2rem;
             border: 1px solid #eee;
-            max-width: 600px;
+            ;
+            max-width: 800px;
         }
 
         .search-input {
@@ -77,6 +92,18 @@
             padding: 8px 10px;
             outline: none;
             font-size: 0.95rem;
+        }
+
+        .location-btn {
+            border: none;
+            background: transparent;
+            cursor: pointer;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            color: var(--accent);
         }
 
         .btn-search {
@@ -90,7 +117,46 @@
             transition: 0.3s;
         }
 
-        .btn-search:hover { filter: brightness(1.2); }
+        .btn-search:hover {
+            filter: brightness(1.2);
+        }
+
+
+        .food-input {
+            width: 10rem;
+        }
+
+        .location-input {
+            width: 16rem;
+        }
+
+        .cart-link i:hover {
+            color: var(--accent);
+            transform: scale(1.2);
+        }
+
+        .cart-link {
+            position: relative;
+            display: inline-block;
+            font-size: 24px;
+            /* size of cart icon */
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -6px;
+            right: -8px;
+            background: purple;
+            color: white;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
 
         /* Categories Section */
         .category-card {
@@ -115,17 +181,26 @@
             position: relative;
             margin-right: 5%;
         }
+
         .carousel-item img {
             width: 100%;
-            height:350px;
+            height: 350px;
             object-fit: contain;
             animation: float 6s ease-in-out infinite
         }
 
         @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
-            100% { transform: translateY(0px); }
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-15px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
         }
 
         .logout-btn {
@@ -139,21 +214,128 @@
         }
 
         @media (max-width: 991px) {
-            .hero { flex-direction: column; text-align: center; padding-top: 2rem; }
-            .headline { font-size: 2.5rem; }
-            .hero-image-slider { margin-top: 3rem; }
+            .hero {
+                flex-direction: column;
+                text-align: center;
+                padding-top: 2rem;
+            }
+
+            .headline {
+                font-size: 2.5rem;
+            }
+
+            .hero-image-slider {
+                margin-top: 3rem;
+            }
+        }
+
+        .contact {
+            width: 70px;
+            height: 70px;
+            background: var(--accent);
+
+            position: fixed;
+            bottom: 2%;
+            right: 2%;
+            z-index: 1050;
+
+            border-radius: 50%;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .contact i {
+            font-size: 28px;
+        }
+
+        /* tooltip */
+        .tooltip-text {
+            position: absolute;
+
+            bottom: 85px;
+            /* above circle */
+            background: black;
+            color: white;
+
+            padding: 6px 12px;
+            border-radius: 6px;
+
+            font-size: 14px;
+            white-space: nowrap;
+
+            opacity: 0;
+            visibility: hidden;
+
+            transition: 0.3s;
+        }
+
+        /* show on hover */
+        .contact:hover .tooltip-text {
+            opacity: 1;
+            visibility: visible;
         }
     </style>
+    <script>
+
+        async function getLocation() {
+
+            if (!navigator.geolocation) {
+                alert("Geolocation not supported");
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                async (position) => {
+
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+
+                    try {
+
+                        // FREE reverse geocoding
+                        const response = await fetch(
+                            `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`
+                        );
+
+                        const data = await response.json();
+
+                        // autofill input
+                        document.getElementById("locationInput").value =
+                            data.display_name;
+
+                    } catch (error) {
+
+                        console.error(error);
+                        alert("Could not get address");
+
+                    }
+
+                },
+                (error) => {
+
+                    console.error(error);
+                    alert("Location permission denied");
+
+                }
+            );
+        }
+
+    </script>
 </head>
+
 <body>
 
     <nav class="navbar d-flex justify-content-between">
-        <img src="{% static 'images/delifood.png' %}" class="logo-img" alt="DeliFood Logo">
-        
+        <img src="{% static 'images/delifoodlogo.jpg' %}" class="logo-img" alt="DeliFood Logo">
+
         <div class="d-flex align-items-center gap-4">
-            <a href="{% url 'register_driver' %}" class="text-decoration-none text-dark fw-bold small">Driver Portal</a>
+            <a href="{% url 'register_driver' %}"
+                class="btn btn-warning rounded-pill text-decoration-none text-dark fw-bold small">Driver Portal</a>
             <div class="dropdown">
-                <button class="btn btn-light rounded-pill dropdown-toggle fw-bold px-3" type="button" data-bs-toggle="dropdown">
+                <button class="btn btn-light rounded-pill dropdown-toggle fw-bold px-3" type="button"
+                    data-bs-toggle="dropdown">
                     <span class="material-symbols-outlined align-middle" style="font-size: 20px;">account_circle</span>
                     {{ user.username|default:"Account" }}
                 </button>
@@ -165,7 +347,9 @@
                             Profile
                         </a>
                     </li>
-                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
                     <li>
                         <form action="{% url 'logout' %}" method="post" class="dropdown-item m-0">
                             {% csrf_token %}
@@ -174,30 +358,68 @@
                     </li>
                 </ul>
             </div>
-        </div>
+            <div class="cart-link">
+                <a href="{% url 'cart_detail' %}" class="text-decoration-none text-light fw-bold">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                </a>
+            </div>
     </nav>
+    </div>
+    <div class="contact">
+        <span class="tooltip-text">Contact Us</span>
+        <a href="tel:+1234567890" class="text-decoration-none text-light fw-bold">
+            <i class="fas fa-phone"></i>
+        </a>
+    </div>
 
     <section class="hero">
         <div class="hero-text">
             <h1 class="headline">Premium Meals, <br>Delivered Daily.</h1>
-            <p class="sub-text text-muted fs-5">Experience the finest cuisine from the best restaurants in town, delivered right to your doorstep.</p>
-            
+            <p class="sub-text text-muted fs-5">Experience the finest cuisine from the best restaurants in town,
+                delivered right to your doorstep.</p>
+
             <!-- SLEEK UPDATED SEARCH SECTION -->
             <form action="{% url 'home' %}" method="GET" class="search-container">
-                <span class="material-symbols-outlined text-muted" style="font-size: 20px;">search</span>
-                <input type="text" name="q" class="search-input" value="{{ food_query }}" placeholder="Search by food...">
-                
-                <div style="border-left: 1px solid #eee; height: 20px; margin: 0 10px;"></div>
-                
-                <span class="material-symbols-outlined text-muted" style="font-size: 20px;">location_on</span>
-                <input type="text" name="address" class="search-input" style="max-width: 130px;" value="{{ address_query }}" placeholder="Location...">
-                
-                <button type="submit" class="btn-search">Search</button>
+
+                <!-- food search -->
+                <span class="material-symbols-outlined text-muted" style="font-size: 20px;">
+                    search
+                </span>
+
+                <input type="text" name="q" class="search-input food-input" value="{{ food_query }}"
+                    placeholder="Search by food...">
+
+                <div style="border-left: 1px solid #eee;
+                height: 20px;
+                margin: 0 10px;">
+                </div>
+
+                <!-- location -->
+                <span class="material-symbols-outlined text-muted" style="font-size: 20px;">
+                    location_on
+                </span>
+
+                <input type="text" name="address" id="locationInput" class="search-input location-input"
+                    value="{{ address_query }}" placeholder="Location...">
+
+                <!-- location button -->
+                <button type="button" onclick="getLocation()" class="location-btn">
+
+                    <span class="material-symbols-outlined">
+                        my_location
+                    </span>
+
+                </button>
+
+                <button type="submit" class="btn-search">
+                    Search
+                </button>
+
             </form>
         </div>
 
         <div class="hero-image-slider">
-           <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
+            <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
                 <div class="carousel-inner">
                     <div class="carousel-item active" data-bs-interval="3000">
                         <img src="{% static 'images/boy.png' %}" alt="Delicious Meal 1">
@@ -250,20 +472,21 @@
             <h4 class="fw-bold mb-0" style="font-family: var(--font-headline);">Trending Meals</h4>
             <a href="#" class="text-decoration-none fw-bold" style="color: var(--primary);">View All</a>
         </div>
-        
+
         <div class="row g-4">
             {% for item in food_items %}
-                <div class="col-12 col-md-6 col-lg-4 col-xl-3">
-                    {% include 'menu/partials/food_card.html' %}
-                </div>
+            <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+                {% include 'menu/partials/food_card.html' %}
+            </div>
             {% empty %}
-                <div class="col-12 text-center py-5">
-                    <p class="text-muted">No delicious meals found yet. Check back soon!</p>
-                </div>
+            <div class="col-12 text-center py-5">
+                <p class="text-muted">No delicious meals found yet. Check back soon!</p>
+            </div>
             {% endfor %}
         </div>
     </section>
 
     <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
 </body>
+
 </html>
