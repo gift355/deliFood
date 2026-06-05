@@ -6,6 +6,7 @@ from django.db.models import Sum
 from .forms import DriverProfileForm
 from .models import DriverProfile, Transaction
 from orders.models import Order
+from delivery.models import Delivery
 
 
 # Create your views here.
@@ -46,14 +47,23 @@ def driver_dashboard(request):
     # 1. Get the driver profile (or 404 if they aren't registered as a driver yet)
     # This prevents the page from crashing if a regular user tries to access it
     driver = get_object_or_404(DriverProfile, user=request.user)
+
+    #Fetch orders from the market place
+    available_orders = Order.objects.filter(status='pending', driver__isnull=True).order_by('-created_at')
+
+    #Fetch orders currrently assugned to the driver
+    active_orders = Order.objects.filter(driver=driver,status__in=['assigned', 'picked_up']).order_by('-updated_at')
+    total_deliveries = Order.objects.filter(driver=driver, status='completed').count()
+
     
     # 2. Context dictionary to send data to the HTML
     context = {
         'driver': driver,
         'driver_balance': driver.total_earnings,
-        'total_deliveries': 0,
+        'total_deliveries': total_deliveries,
         'rating': 5.0,
-        'available_orders': [],
+        'available_orders':available_orders,
+        'active_orders': active_orders,
         'status': "Online" if driver.is_online else "Offline",
         # 'active_orders': Order.objects.filter(driver=driver, status='active') # For later!
     }
@@ -81,20 +91,14 @@ def driver_earnings(request):
 
 @login_required
 def my_deliveries(request):
-    # 1. Safely get the driver profile tied to the user
-    # This ensures only registered drivers can see this page
     driver = get_object_or_404(DriverProfile, user=request.user)
     
-    # 2. Get active orders (Assigned or Picked Up)
-    # excluded 'completed' and 'cancelled' so the list stays relevant
-    # We order by -updated_at so the most recent activity is at the top
+    # We query the ORDER model because that's what you're using in Admin
     active_orders = Order.objects.filter(
-        driver=driver
-    ).exclude(
-        status__in=['completed', 'cancelled']
-    ).order_by('-updated_at')
-
-    # 3. Context for the template
+        driver=driver,
+        status__in=['assigned', 'picked_up'] # Only show active work
+    ).prefetch_related('items__food_item__restaurant').order_by('-updated_at')
+    
     context = {
         'orders': active_orders,
         'active_count': active_orders.count(),

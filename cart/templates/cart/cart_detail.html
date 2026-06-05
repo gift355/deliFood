@@ -88,7 +88,6 @@
 </head>
 <body>
 
-    <!-- Simple Nav -->
     <header class="cart-header">
         <div class="container d-flex align-items-center">
             <a href="{% url 'home' %}" class="text-decoration-none d-flex align-items-center" style="color: var(--primary);">
@@ -111,7 +110,6 @@
 
         {% if cart.items.exists %}
             <div class="row g-4">
-                <!-- Cart Items List -->
                 <div class="col-lg-8">
                     <div class="cart-card p-4">
                         <div class="d-flex align-items-center mb-4">
@@ -138,35 +136,42 @@
                     </div>
                 </div>
 
-                <!-- Order Summary Sidebar -->
                 <div class="col-lg-4">
                     <div class="cart-card p-4 sticky-top" style="top: 100px;">
                         <h5 class="fw-bold mb-4" style="font-family: var(--font-headline);">Order Summary</h5>
                         
-                        <div class="d-flex justify-content-between mb-2">
-                            <span class="text-muted">Subtotal</span>
-                            <span class="fw-bold">₦{{ cart.total_price }}</span>
-                        </div>
-                        <div class="d-flex justify-content-between mb-4">
-                            <span class="text-muted">Delivery Fee</span>
-                            <span class="text-success small">Calculated at next step</span>
-                        </div>
-                        
-                        <hr>
-                        
-                        <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h4 class="fw-bold mb-0">Total</h4>
-                            <h4 class="fw-bold mb-0" style="color: var(--primary);">₦{{ cart.total_price }}</h4>
-                        </div>
-                        
-                        <button class="btn btn-checkout w-100">
-                            Proceed to Checkout
-                        </button>
+                        <form action="{% url 'place_order' %}" method="POST">
+                            {% csrf_token %}
+                            
+                            <div class="form-group mb-4">
+                                <label for="delivery_address" class="form-label small fw-bold text-muted" style="letter-spacing: 0.5px;">DELIVERY ADDRESS</label>
+                                <textarea name="delivery_address" id="delivery_address" rows="2" class="form-control rounded-3" style="border: 1px solid rgba(73, 0, 92, 0.15); resize: none;" placeholder="Enter your delivery street location address..." required></textarea>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Subtotal</span>
+                                <span class="fw-bold">₦{{ cart.total_price }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-4">
+                                <span class="text-muted">Delivery Fee</span>
+                                <span class="text-success small">Calculated at next step</span>
+                            </div>
+                            
+                            <hr>
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h4 class="fw-bold mb-0">Total</h4>
+                                <h4 class="fw-bold mb-0" style="color: var(--primary);">₦{{ cart.total_price }}</h4>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-checkout w-100">
+                                Proceed to Checkout
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
         {% else %}
-            <!-- Empty State -->
             <div class="text-center py-5">
                 <div class="mb-4 d-inline-block p-4 rounded-circle" style="background: #f3e5f5;">
                     <span class="material-symbols-outlined" style="font-size: 64px; color: var(--primary);">shopping_cart</span>

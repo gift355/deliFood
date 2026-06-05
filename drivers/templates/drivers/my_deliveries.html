@@ -38,12 +38,22 @@
                         #{{ order.order_number }}
                     </span>
                     
-                    <!-- Clean class-based status color -->
                     <span class="small fw-bold text-uppercase tracking-wider status-text-{{ order.status }}">
                         {{ order.get_status_display }}
                     </span>
                 </div>
 
+                <div class="mb-3">
+                    <label class="text-muted small fw-bold d-block mb-1">PICKUP FROM</label>
+                    <div class="p-2 rounded-3" style="background: #fff8e1; border-left: 3px solid #f57f17;">
+                        <p class="fw-bold mb-0" style="font-size: 0.9rem;">
+                            {{ order.items.first.food_item.restaurant.name|default:"Restaurant Info N/A" }}
+                        </p>
+                        <p class="small text-muted mb-0">
+                            {{ order.items.first.food_item.restaurant.address|truncatechars:35 }}
+                        </p>
+                    </div>
+                </div>
                 <div class="mb-3">
                     <label class="text-muted small fw-bold d-block mb-1">CUSTOMER</label>
                     <p class="fw-bold mb-0">{{ order.customer.get_full_name|default:order.customer.username }}</p>
@@ -65,9 +75,10 @@
                     
                     <div class="action-buttons">
                         {% if order.status == 'assigned' %}
-                            <a href="{% url 'update_order_status' order.id 'picked_up' %}" class="btn btn-dark rounded-pill px-4 fw-bold">
+                            <a href="{% url 'pickup_delivery' order.id %}" class="btn btn-dark rounded-pill px-4 fw-bold">
                                 Confirm Pickup
                             </a>
+                        
                         {% elif order.status == 'picked_up' %}
                             <a href="{% url 'complete_delivery' order.id %}" class="btn btn-success rounded-pill px-4 fw-bold">
                                 Finish Delivery

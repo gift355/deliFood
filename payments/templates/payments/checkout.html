@@ -1,0 +1,81 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>DeliFood | Checkout Securely</title>
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <style>
+        :root { --primary: #49005c; --primary-container: #631f75; }
+        body { background-color: #fafafa; font-family: 'Inter', sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .checkout-container { width: 100%; max-width: 440px; padding: 1.5rem; }
+        .checkout-card { background: #ffffff; border-radius: 1.25rem; box-shadow: 0 8px 30px rgba(73, 0, 92, 0.04); border: 1px solid #eaeaea; padding: 2rem 1.8rem; }
+        .headline { font-family: 'Manrope', sans-serif; font-weight: 800; color: var(--primary); font-size: 1.3rem; text-align: center; }
+        .order-summary { background: #fdf8ff; border-radius: 0.75rem; padding: 1rem; margin: 1.5rem 0; border: 1px solid #f8f0fb; }
+        .btn-pay { background: linear-gradient(to right, var(--primary), var(--primary-container)); color: white; border: none; border-radius: 50px; padding: 0.85rem 1rem; width: 100%; font-weight: 700; font-family: 'Manrope', sans-serif; font-size: 0.95rem; display: flex; justify-content: center; align-items: center; gap: 8px; }
+    </style>
+</head>
+<body>
+
+<main class="checkout-container">
+    <div class="checkout-card">
+        <h1 class="headline">Secure Checkout</h1>
+        <p class="text-muted text-center small">Complete your transaction using our secure payment gateway.</p>
+        
+        <div class="order-summary">
+            <div class="d-flex justify-content-between small mb-2">
+                <span class="text-muted">Order Code:</span>
+                <strong class="text-dark">#{{ order.order_number }}</strong>
+            </div>
+            <div class="d-flex justify-content-between font-weight-bold pt-2 border-top">
+                <span class="text-dark font-weight-bold">Total Amount:</span>
+                <strong class="text-dark" style="color: var(--primary) !important;">₦{{ order.total_amount }}</strong>
+            </div>
+        </div>
+
+        <button type="button" class="btn-pay" onclick="payWithPaystack()">
+            Pay Securely Now
+        </button>
+    </div>
+</main>
+
+<script src="https://js.paystack.co/v1/inline.js"></script>
+<script>
+    function payWithPaystack() {
+        // We wrap dynamic variables in quotes so the linter reads them as plain strings cleanly
+        const p_key = '{{ paystack_public_key }}';
+        const p_email = '{{ email }}';
+        const p_amount = parseInt('{{ amount_in_kobo }}', 10);
+        const p_ref = '{{ payment_reference }}';
+        
+        let handler = PaystackPop.setup({
+            key: p_key,
+            email: p_email,
+            amount: p_amount,
+            currency: 'NGN',
+            ref: p_ref,
+            callback: function(response) {
+                // Constructing verification URL query cleanly
+                fetch("/payments/verify/" + p_ref + "/")
+                .then(res => res.json())
+                .then(data => {
+                    if(data.status === 'success') {
+                        alert("Payment verification complete! Processing your order details now.");
+                        // 🚀 Grabbed the secure, dynamic URL string sent down by Django views
+                        window.location.href = data.redirect_url; 
+                    } else {
+                        alert("Security check warning: " + data.message);
+                    }
+                });
+            },
+            onClose: function() {
+                alert('Checkout window dismissed before completing execution.');
+            }
+        });
+        handler.openIframe();
+    }
+</script>
+</body>
+</html>

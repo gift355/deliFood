@@ -1,6 +1,9 @@
 # Create your views here.
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.utils.crypto import get_random_string
+from django.utils import timezone
+from orders.models import Order, OrderItem
 from django.contrib import messages
 from menu.models import FoodItem
 from .models import Cart, CartItem
@@ -64,3 +67,53 @@ def remove_from_cart(request, item_id):
 
     messages.info(request, "Item removed from cart.")
     return redirect('cart_detail')
+
+@login_required
+def place_order(request):
+    cart, created = Cart.objects.get_or_create(user=request.user)
+    
+    if not cart.items.exists():
+        messages.error(request, "Your cart is empty! Add items before checking out.")
+        return redirect('cart_detail')
+        
+    if request.method == 'POST':
+        # Capture the address from your checkout form submission
+        address = request.POST.get('delivery_address', '').strip()
+        
+        # Validation fallback rule so database doesn't reject it
+        if not address:
+            messages.error(request, "Please provide a delivery address to complete your order.")
+            return redirect('cart_detail')
+            
+        # 1. GENERATE A COMPACT 10-CHARACTER ORDER CODE
+        # Using a 3-character prefix + 7 random uppercase characters to fit max_length=10 perfectly
+        unique_order_number = f"DL-{get_random_string(7).upper()}"
+        
+        # 2. CREATE THE MAIN ORDER MATCHING YOUR EXACT FIELDS
+        order = Order.objects.create(
+            customer=request.user,
+            order_number=unique_order_number,
+            delivery_address=address,
+            total_amount=cart.total_price,
+            status='pending', # Matches your default state choice
+            payout_amount=500 # Optional: allocating 80% to driver payout
+        )
+        
+        # 3. MIGRATE CART ITEMS TO ORDER ITEMS
+        for cart_item in cart.items.all():
+            OrderItem.objects.create(
+                order=order,
+                food_item=cart_item.food_item,
+                quantity=cart_item.quantity,
+                price=cart_item.food_item.price
+            )
+            
+        # 4. TEAR DOWN ACTIVE CART TRACKING ENTRIES
+        cart.items.all().delete()
+        cart.restaurant = None
+        cart.save()
+        
+        # 5. STREAM TO SECURE PAYMENT FRAMEWORK
+        return redirect('payments:initiate_payment', order_number=order.order_number)
+
+    return render(request, 'cart/cart_detail.html', {'cart': cart})
