@@ -4,8 +4,10 @@ from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
 from .models import Delivery
 from drivers.models import DriverProfile
+from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 
+@login_required
 def accept_delivery(request, pk):
     # Start the atomic transaction
     with transaction.atomic():
@@ -26,7 +28,34 @@ def accept_delivery(request, pk):
 
 
 # 2. PICKUP
+@login_required
 def pickup_delivery(request, pk):
+    driver_profile = get_object_or_404(DriverProfile, user=request.user)
+    
+    # 🚀 FIX: Find the delivery tracking row by the order ID first
+    delivery = get_object_or_404(Delivery, order__id=pk)
+    
+    # Secure safety check: If it's already assigned to another driver, stop them
+    if delivery.driver and delivery.driver != driver_profile:
+        messages.error(request, "This delivery has already been claimed by another driver.")
+        return redirect('driver_dashboard')
+        
+    # Ensure the driver relationship is officially bound to the delivery row
+    delivery.driver = driver_profile
+    delivery.status = 'picked_up'
+    delivery.picked_up_at = timezone.now()
+    delivery.save()
+    
+    # Update the parent order status so customers can track it live
+    order = delivery.order
+    order.status = 'picked_up'
+    order.save()
+
+    messages.success(request, f"Order #{order.order_number} successfully picked up!")
+    
+    # 🚀 Redirect back to your dashboard (or 'my_deliveries' if registered in core urls)
+    return redirect('driver_dashboard')
+#def pickup_delivery(request, pk):
     driver_profile = get_object_or_404(DriverProfile, user=request.user)
     delivery = get_object_or_404(Delivery, order__id=pk, driver=driver_profile)
     delivery.status = 'picked_up'
@@ -41,6 +70,7 @@ def pickup_delivery(request, pk):
     return redirect('my_deliveries')
 
 # 3. COMPLETE
+@login_required
 def complete_delivery(request, pk):
     driver_profile = get_object_or_404(DriverProfile, user=request.user)
     delivery = get_object_or_404(Delivery, order__id=pk, driver=driver_profile)

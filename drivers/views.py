@@ -60,9 +60,10 @@ def driver_dashboard(request):
     context = {
         'driver': driver,
         'driver_balance': driver.total_earnings,
-        'total_deliveries': 0,
+        'total_deliveries': total_deliveries,
         'rating': 5.0,
-        'available_orders': [],
+        'available_orders':available_orders,
+        'active_orders': active_orders,
         'status': "Online" if driver.is_online else "Offline",
         # 'active_orders': Order.objects.filter(driver=driver, status='active') # For later!
     }
