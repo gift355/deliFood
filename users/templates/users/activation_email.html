@@ -1,0 +1,14 @@
+Hi {{ user.username }},
+
+Thank you for registering at DeliFood! 
+
+To complete your registration and activate your food delivery account, please click the secure confirmation link below:
+
+http://{{ domain }}{% url 'activate_account' uidb64=uid token=token %}
+
+(Note: This activation link will expire in 24 hours for security purposes.)
+
+If you did not sign up for a DeliFood profile, please ignore this email safely.
+
+Best regards,
+The DeliFood Team

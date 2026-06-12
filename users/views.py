@@ -1,5 +1,11 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, get_user_model
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.core.mail import send_mail, EmailMessage
+from django.template.loader import render_to_string
+from django.contrib.sites.shortcuts import get_current_site
 from .forms import CustomerSignupForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
@@ -7,12 +13,70 @@ from django.contrib.auth.decorators import login_required
 from menu.models import FoodItem
 from restaurant.models import Restaurant
 from django.db.models import Q
+from .tokens import account_activation_token
 # Create your views here.
 
 def landing_view(request):
     return render(request, 'users/landing.html')
 
+User = get_user_model()
+
 def signup_view(request):
+    if request.method == "POST":
+        form = CustomerSignupForm(request.POST)
+        
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.is_active = False  # Lock until email is confirmed
+            user.save()
+
+            current_site = get_current_site(request)
+            mail_subject = "Activate your DeliFood account"
+            
+            message = render_to_string("users/activation_email.html", {
+                "user": user,
+                "domain": current_site.domain,
+                "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+                # Use your custom token generator here:
+                "token": account_activation_token.make_token(user),
+            })
+            
+            user_email = form.cleaned_data.get('email')
+            email_msg = EmailMessage(mail_subject, message, to=[user_email])
+            
+            try:
+                email_msg.send()
+                messages.success(request, "Account created! Please confirm your email to complete registration.")
+            except Exception as e:
+                messages.warning(request, f"Account created, but activation email failed to send. Error: {e}")
+            
+            return redirect("login")
+            
+    else:
+        form = CustomerSignupForm()
+        
+    return render(request, "users/signup.html", {"form": form})
+
+
+def activate_account(request, uidb64, token):
+    User = get_user_model()
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+     # Using the custom account_activation_token here to validate
+    if user is not None and account_activation_token.check_token(user, token):
+        user.is_active = True
+        user.save()
+        messages.success(request, "Your email has been successfully verified! Welcome to DeliFood.")
+        return redirect('login')
+    else:
+        return render(request, 'users/email_verification_invalid.html')
+    
+
+#def signup_view(request):
     if request.method == 'POST':
         form = CustomerSignupForm(request.POST)
         if form.is_valid():
