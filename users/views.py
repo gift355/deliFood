@@ -12,6 +12,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from menu.models import FoodItem
 from restaurant.models import Restaurant
+from django.contrib.auth.forms import SetPasswordForm
 from django.db.models import Q
 from .tokens import account_activation_token
 # Create your views here.
@@ -50,13 +51,16 @@ def signup_view(request):
             except Exception as e:
                 messages.warning(request, f"Account created, but activation email failed to send. Error: {e}")
             
-            return redirect("login")
+            return redirect("account_activation_notice")
             
     else:
         form = CustomerSignupForm()
         
     return render(request, "users/signup.html", {"form": form})
 
+
+def account_activation_notice(request):
+    return render(request, "users/account_activation_notice.html")
 
 def activate_account(request, uidb64, token):
     User = get_user_model()
@@ -88,6 +92,73 @@ def activate_account(request, uidb64, token):
         form = CustomerSignupForm()
     return render(request, 'users/signup.html', {'form': form})
 
+
+def password_reset_request(request):
+    if request.method == "POST":
+        email = request.POST.get("email")
+        
+        try:
+            user = User.objects.get(email=email)
+            
+            # Prepare secure token parameters
+            current_site = get_current_site(request)
+            subject = "Password Reset Request | DeliFood"
+            message = render_to_string("users/password_reset_email.html", {
+                "user": user,
+                "domain": current_site.domain,
+                "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+                "token": default_token_generator.make_token(user),
+                "protocol": "https" if request.is_secure() else "http"
+            })
+            
+            email_msg = EmailMessage(subject, message, to=[email])
+            email_msg.send()
+            
+        except User.DoesNotExist:
+            #  We do nothing here! By failing silently, hackers can't phish for real emails.
+            pass
+        except Exception as e:
+            # Catches connection faults with your email backend provider
+            messages.error(request, f"System error dispatching recovery sequence: {e}")
+            return render(request, "users/password_reset.html")
+
+        #  Always redirect here to trigger your standalone password_reset_done page!
+        return redirect("password_reset_done")
+
+    return render(request, "users/password_reset.html")
+
+def password_reset_confirm(request, uidb64, token):
+    try:
+        # Decode base64 UID back to the user's primary key integer/string
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    # Validate that the token matches this specific user and hasn't expired
+    if user is not None and default_token_generator.check_token(user, token):
+        if request.method == "POST":
+            form = SetPasswordForm(user, request.POST)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Your password has been reset successfully.")
+                # 🚀 Redirect to your standalone completion template view
+                return redirect("password_reset_complete")
+        else:
+            form = SetPasswordForm(user)
+            
+        return render(request, "users/password_reset_confirm.html", {"form": form})
+    else:
+        # Link was manipulated or expired (exceeded PASSWORD_RESET_TIMEOUT)
+        messages.error(request, "The password reset link is invalid or has expired.")
+        # 🚀 Fixed hyphen to underscore to prevent URL routing crashes
+        return redirect("password_reset")
+    
+def password_reset_done(request):
+    return render(request, "users/password_reset_done.html")
+
+def password_reset_complete(request):
+    return render(request, "users/password_reset_complete.html")
 
 def login_view(request):
     if request.method == 'POST':

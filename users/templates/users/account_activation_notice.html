@@ -1,0 +1,48 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Activate Your Account | DeliFood</title>
+    
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
+    <style>
+        :root {
+            --primary: #49005c;
+            --primary-container: #631f75;
+            --on-surface-variant: #4e434f;
+            --font-headline: 'Manrope', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+        body { background-color: #ffffff; font-family: var(--font-body); min-height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; }
+        .signup-container { width: 100%; max-width: 460px; padding: 1rem; }
+        .logo-section { text-align: center; margin-bottom: 1.2rem; }
+        .logo-img { height: 110px; width: auto; margin-bottom: 0.2rem; }
+        .headline { font-family: var(--font-headline); font-weight: 800; color: var(--primary); font-size: 1.4rem; letter-spacing: -0.5px; }
+        .signup-card { background-color: #ffffff; border-radius: 1.25rem; padding: 2.2rem 2.2rem; box-shadow: 0 10px 40px rgba(0,0,0,0.06); border: 1px solid #f3f3f3; text-align: center; }
+        .status-icon { font-size: 4rem; color: var(--primary); margin-bottom: 1rem; font-variation-settings: 'FILL' 1; }
+        .btn-signin { background: linear-gradient(to right, var(--primary), var(--primary-container)); color: white; border: none; border-radius: 50px; padding: 0.7rem 1rem; width: 100%; font-weight: 700; font-family: var(--font-headline); font-size: 0.95rem; margin-top: 1.5rem; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
+        .btn-signin:hover { transform: translateY(-2px); filter: brightness(1.1); color: white; }
+    </style>
+</head>
+<body>
+<main class="signup-container">
+    <div class="logo-section">
+        <img src="{% static 'images/delifood.png' %}" class="logo-img" alt="DeliFood Logo">
+        <h1 class="headline">Verify Your Email</h1>
+    </div>
+    <div class="signup-card">
+        <span class="material-symbols-outlined status-icon">alternate_email</span>
+        <h4 class="fw-bold mb-2 text-dark">Almost there!</h4>
+        <p class="text-muted small mb-0 px-1">
+            We have dispatched an account activation link to your email address. Please open the link within your inbox to authorize and unlock your premium DeliFood features.
+        </p>
+        <a href="{% url 'login' %}" class="btn-signin">Go to Sign In</a>
+    </div>
+</main>
+</body>
+</html>
