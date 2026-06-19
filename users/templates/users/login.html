@@ -151,12 +151,16 @@
                 </div>
             </div>
 
-            <div class="mb-4">
+            <div class="mb-3">
                 <label class="form-label">Password</label>
                 <div class="input-group-custom">
                     <span class="material-symbols-outlined">lock</span>
                     <input type="password" name="password" class="form-control" placeholder="••••••••" required>
                 </div>
+            </div>
+
+            <div class="text-end mb-4" style="margin-top: -5px;">
+                <a href="{% url 'password_reset_request' %}" style="color: var(--primary); font-weight: 600; font-size: 0.8rem; text-decoration: none;">Forgot Password?</a>
             </div>
 
             <button class="btn-login" type="submit">Sign In</button>

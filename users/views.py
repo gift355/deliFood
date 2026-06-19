@@ -44,12 +44,13 @@ def signup_view(request):
             
             user_email = form.cleaned_data.get('email')
             email_msg = EmailMessage(mail_subject, message, to=[user_email])
+            email_msg.content_subtype = "plain"
             
-            try:
-                email_msg.send()
-                messages.success(request, "Account created! Please confirm your email to complete registration.")
-            except Exception as e:
-                messages.warning(request, f"Account created, but activation email failed to send. Error: {e}")
+            #try:
+            email_msg.send()
+            messages.success(request, "Account created! Please confirm your email to complete registration.")
+            #except Exception as e:
+                #messages.warning(request, f"Account created, but activation email failed to send. Error: {e}")
             
             return redirect("account_activation_notice")
             
@@ -115,17 +116,17 @@ def password_reset_request(request):
             email_msg.send()
             
         except User.DoesNotExist:
-            #  We do nothing here! By failing silently, hackers can't phish for real emails.
+            # Fails silently for user enumeration security
             pass
         except Exception as e:
-            # Catches connection faults with your email backend provider
             messages.error(request, f"System error dispatching recovery sequence: {e}")
-            return render(request, "users/password_reset.html")
+            return render(request, "users/password_reset.html") 
 
-        #  Always redirect here to trigger your standalone password_reset_done page!
+        # Redirect to your standalone completion page
         return redirect("password_reset_done")
 
-    return render(request, "users/password_reset.html")
+    # This handles the GET request when a user first lands on the page
+    return render(request, "users/password_reset.html") 
 
 def password_reset_confirm(request, uidb64, token):
     try:
