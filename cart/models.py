@@ -6,7 +6,7 @@ from restaurant.models import Restaurant
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
-from .models import CartItem
+#from .models import CartItem
 
 
 class Cart(models.Model):
