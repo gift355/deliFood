@@ -3,6 +3,11 @@ from django.db import models
 from django.conf import settings
 from menu.models import FoodItem
 from restaurant.models import Restaurant
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.db.models import Sum
+from .models import CartItem
+
 
 class Cart(models.Model):
     # Link to your Custom User model
@@ -51,3 +56,11 @@ class CartItem(models.Model):
     def get_cost(self):
         """Price calculation based on your FoodItem price field."""
         return self.food_item.price * self.quantity
+    
+@login_required
+def some_view(request):
+    cart_count = CartItem.objects.filter(cart__user=request.user).aggregate(total_qty=Sum('quantity'))['total_qty'] or 0
+
+    return render(request, "home.html", {
+        "cart_count": cart_count
+    })
