@@ -67,7 +67,8 @@ def verify_payment(request, reference):
             
             # 3. 🚀 DYNAMIC ROUTE GENERATION:
             # Safely look up the exact 'order_detail' path using the order number
-            redirect_url = reverse('orders:order_detail', kwargs={'order_number': order.order_number})
+            #redirect_url = reverse('orders:order_detail', kwargs={'order_number': order.order_number})
+            redirect_url = ('cart:cart_detail')
             
             # Pass the URL back inside the JSON response block
             return JsonResponse({

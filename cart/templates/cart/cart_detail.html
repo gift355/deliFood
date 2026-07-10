@@ -126,7 +126,7 @@
                                 </div>
                                 <div class="text-end">
                                     <p class="mb-1 fw-bold text-dark">₦{{ item.get_cost }}</p>
-                                    <a href="{% url 'remove_from_cart' item.id %}" class="text-danger small text-decoration-none d-flex align-items-center justify-content-end">
+                                    <a href="{% url 'cart:remove_from_cart' item.id %}" class="text-danger small text-decoration-none d-flex align-items-center justify-content-end">
                                         <span class="material-symbols-outlined me-1" style="font-size: 18px;">delete</span>
                                         Remove
                                     </a>
@@ -140,7 +140,7 @@
                     <div class="cart-card p-4 sticky-top" style="top: 100px;">
                         <h5 class="fw-bold mb-4" style="font-family: var(--font-headline);">Order Summary</h5>
                         
-                        <form action="{% url 'place_order' %}" method="POST">
+                        <form action="{% url 'cart:place_order' %}" method="POST">
                             {% csrf_token %}
                             
                             <div class="form-group mb-4">

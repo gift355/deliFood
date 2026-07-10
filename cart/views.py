@@ -46,7 +46,7 @@ def add_to_cart(request, item_id):
         cart_item.save()
         messages.success(request, f"Added {quantity} x {food_item.name} to your cart.")
 
-    return redirect('cart_detail')
+    return redirect('cart:cart_detail')
 
 @login_required
 def cart_detail(request):
@@ -66,7 +66,7 @@ def remove_from_cart(request, item_id):
         cart.save()
 
     messages.info(request, "Item removed from cart.")
-    return redirect('cart_detail')
+    return redirect('cart:cart_detail')
 
 @login_required
 def place_order(request):
@@ -74,7 +74,7 @@ def place_order(request):
     
     if not cart.items.exists():
         messages.error(request, "Your cart is empty! Add items before checking out.")
-        return redirect('cart_detail')
+        return redirect('/cart/')
         
     if request.method == 'POST':
         # Capture the address from your checkout form submission
@@ -83,7 +83,7 @@ def place_order(request):
         # Validation fallback rule so database doesn't reject it
         if not address:
             messages.error(request, "Please provide a delivery address to complete your order.")
-            return redirect('cart_detail')
+            return redirect('/cart/')
             
         # 1. GENERATE A COMPACT 10-CHARACTER ORDER CODE
         # Using a 3-character prefix + 7 random uppercase characters to fit max_length=10 perfectly

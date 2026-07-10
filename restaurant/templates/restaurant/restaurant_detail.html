@@ -92,7 +92,6 @@
 </head>
 <body>
 
-    <!-- Cover Image -->
     <div class="cover-photo"></div>
 
     <div class="container profile-header-container">
@@ -120,15 +119,31 @@
                         </p>
                     </div>
                     
-                    <p class="lead text-secondary" style="max-width: 700px; margin: 0 auto 0 0;">
+                    <p class="lead text-secondary mb-0" style="max-width: 700px; margin: 0 auto 0 0;">
                         {{ restaurant.description }}
                     </p>
+
+                    {% if request.user == restaurant.vendor_owner %}
+                        <div class="mt-4 pt-3 border-top d-flex flex-wrap gap-2 justify-content-center justify-content-md-start">
+                            <a href="{% url 'menu:food_create' restaurant.slug %}" class="btn btn-sm btn-success d-inline-flex align-items-center gap-1">
+            <span class="material-symbols-outlined font-size-18">add_circle</span>
+            Add Food Item
+        </a>
+                            <a href="{% url 'restaurant:restaurant_update' restaurant.slug %}" class="btn btn-sm text-white d-inline-flex align-items-center gap-1" style="background-color: var(--primary);">
+                                <span class="material-symbols-outlined font-size-18">edit</span>
+                                Edit Store Settings
+                            </a>
+                            <a href="{% url 'restaurant:restaurant_delete' restaurant.slug %}" class="btn btn-sm btn-outline-danger d-inline-flex align-items-center gap-1">
+                                <span class="material-symbols-outlined font-size-18">delete</span>
+                                Remove From Platform
+                            </a>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Menu Grid -->
     <section class="container py-4">
         <h3 class="fw-bold mb-4" style="font-family: var(--font-headline); color: var(--primary); font-size: 1.8rem;">
             Explore Our Menu
@@ -136,7 +151,6 @@
         
         <div class="row g-3 g-md-4">
             {% for item in restaurant.menu_items.all %}
-                <!-- 2 items per row on mobile (col-6), 3 on tablets, 4 on desktop -->
                 <div class="col-6 col-md-4 col-lg-3">
                     {% include 'menu/partials/food_card.html' with items=items %}
                 </div>

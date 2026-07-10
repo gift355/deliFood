@@ -44,12 +44,16 @@
 <script src="https://js.paystack.co/v1/inline.js"></script>
 <script>
     function payWithPaystack() {
-        // We wrap dynamic variables in quotes so the linter reads them as plain strings cleanly
         const p_key = '{{ paystack_public_key }}';
         const p_email = '{{ email }}';
         const p_amount = parseInt('{{ amount_in_kobo }}', 10);
         const p_ref = '{{ payment_reference }}';
         
+        // 🚀 Dynamic verification path built natively with proper Django curly brackets
+        const verifyUrl = "{% url 'payments:verify_payment' reference='PLACEHOLDER' %}".replace('PLACEHOLDER', p_ref);
+        // 🚀 Target cart URL built natively with proper Django curly brackets
+        const cartUrl = "{% url 'cart:cart_detail' %}";
+
         let handler = PaystackPop.setup({
             key: p_key,
             email: p_email,
@@ -57,21 +61,28 @@
             currency: 'NGN',
             ref: p_ref,
             callback: function(response) {
-                // Constructing verification URL query cleanly
-                fetch("/payments/verify/" + p_ref + "/")
+                // Fetch using our dynamically checked verification route path string
+                fetch(verifyUrl)
                 .then(res => res.json())
                 .then(data => {
                     if(data.status === 'success') {
-                        alert("Payment verification complete! Processing your order details now.");
-                        // 🚀 Grabbed the secure, dynamic URL string sent down by Django views
-                        window.location.href = data.redirect_url; 
+                        alert("Payment successful! Returning to your cart.");
+                        // 🚀 REDIRECT TO EMPTY CART ON SUCCESS
+                        window.location.href = cartUrl; 
                     } else {
                         alert("Security check warning: " + data.message);
                     }
+                })
+                .catch(err => {
+                    console.error("Verification failed:", err);
+                    alert("A network check issue occurred, checking cart status...");
+                    window.location.href = cartUrl;
                 });
             },
             onClose: function() {
-                alert('Checkout window dismissed before completing execution.');
+                alert('Checkout window dismissed. Returning to your cart.');
+                // 🚀 REDIRECT TO CART ON CLOSE/FAILURE
+                window.location.href = cartUrl; 
             }
         });
         handler.openIframe();

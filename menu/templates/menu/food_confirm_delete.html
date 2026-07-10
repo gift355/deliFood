@@ -1,0 +1,85 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Remove Item | DeliFood</title>
+    
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    
+    <style>
+        :root { 
+            --primary: #49005c; 
+            --dark-text: #1a0021;
+            --font-headline: 'Manrope', sans-serif; 
+        }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #fdf8ff; 
+            height: 100vh;
+        }
+        .delete-card {
+            background: white;
+            border-radius: 30px;
+            box-shadow: 0 10px 40px rgba(73, 0, 92, 0.06);
+            border: none;
+        }
+        .warning-icon-container {
+            width: 72px;
+            height: 72px;
+            background-color: #fff1f2;
+            color: #dc3545;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .headline {
+            font-family: var(--font-headline);
+            font-weight: 800;
+            color: var(--dark-text);
+            letter-spacing: -0.5px;
+        }
+    </style>
+</head>
+<body class="d-flex align-items-center">
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card delete-card p-4 text-center">
+                <div class="card-body">
+                    
+                    <div class="warning-icon-container mb-4">
+                        <span class="material-symbols-outlined" style="font-size: 36px;">delete_forever</span>
+                    </div>
+                    
+                    <h3 class="headline mb-3">Remove This Item?</h3>
+                    <p class="text-muted px-2 mb-4">
+                        Are you completely sure you want to drop <strong>{{ food_item.name }}</strong>? This will permanently discard the dish details and image file from the delivery menu.
+                    </p>
+                    
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-danger btn-lg rounded-pill fw-bold fs-6 shadow-sm">
+                                Yes, Delete From Menu
+                            </button>
+                            <a href="{% url 'restaurant:restaurant_detail' food_item.restaurant.slug %}" class="btn btn-light btn-lg rounded-pill text-muted fw-semibold mt-1">
+                                Keep This Item
+                            </a>
+                        </div>
+                    </form>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>
