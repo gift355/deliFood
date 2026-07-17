@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+venv/
+.env/
+.food/
+.deli/
+.me/
+.emp/
+venv-foodPro/
+venv-foodpro/
+
+# Django
+db.sqlite3
+media/
+staticfiles/
+
+# Environment Variables
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# OS Files
+Thumbs.db
+.DS_Store
+
+# Logs
+*.log
+
+# Python packaging
+*.egg-info/
+build/
+dist/
+
+# Pytest
+.pytest_cache/
+
+# Migrations (optional)
+# */migrations/
+# !*/migrations/__init__.py
